@@ -12,6 +12,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, asdict
 from datetime import datetime
+from operator import itemgetter
 
 from stadiums.utils import extract_int, from_iterable, init_log
 from stadiums.utils.scrape import getsoup, throttled
@@ -99,8 +100,6 @@ class Stadium:
 
     @property
     def is_modern(self) -> bool:
-        if self.cost is None:
-            return False
         dates = [d for d in (self.inauguration, self.renovation) if d is not None]
         if not dates:
             return False
@@ -163,6 +162,7 @@ def _scrape_details(basic_data: _BasicStadium) -> Stadium:
 
 
 STADIUMS = [_scrape_details(bs) for bs in BASIC_STADIUMS]
+CLUB_NAMES = sorted({club for stadium in STADIUMS for club in stadium.clubs})
 MODERN_STADIUMS = [s for s in STADIUMS if s.is_modern]
 
 
@@ -188,5 +188,5 @@ def _stadiums_per_town() -> list:
     return result
 
 
-STADIUMS_PER_TOWN = _stadiums_per_town()
+STADIUMS_PER_TOWN = sorted(_stadiums_per_town(), key=itemgetter("total_capacity"), reverse=True)
 
