@@ -1,0 +1,9 @@
+numpy~=1.26.1
+pandas~=2.1.1
+contexttimer~=0.3.3
+requests~=2.31.0
+beautifulsoup4~=4.12.2
+backoff~=2.2.1
+pytz~=2023.3.post1
+gspread~=5.11.3
+langcodes~=3.3.0
