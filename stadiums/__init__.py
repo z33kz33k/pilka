@@ -1,8 +1,8 @@
 """
 
     stadiums.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Scrape data Polish stadiums.
+    ~~~~~~~~~~~~~~~~~~~~
+    Scrape data on Polish stadiums.
 
     @author: z33k
 
@@ -52,6 +52,60 @@ TOWNS.extend([
 ])
 
 
+def get_tier(capacity: int) -> str:
+    """Return stadium's tier based on its capacity.
+
+    Ranges are loosely based on a following function:
+        def step(n, factor=1.48):
+        number = 1_000
+        if n <= 0:
+            return number
+        for _ in range(n):
+            number *= factor
+        return int(round(number))
+
+        >>> step(1)
+        1480
+        >>> step(2)
+        2190
+        >>> step(3)
+        3242
+        >>> step(4)
+        4798
+        >>> step(5)
+        7101
+        >>> step(6)
+        10509
+        >>> step(7)
+        15554
+        >>> step(8)
+        23019
+        >>> step(9)
+        34069
+        >>> step(10)
+        50422
+        >>> step(11)
+        74624
+    """
+    tiers2steps = {
+        0: 75_000,
+        1: 50_000,
+        2: 34_000,
+        3: 23_000,
+        4: 15_550,
+        5: 10_500,
+        6: 7_100,
+        7: 4_800,
+        8: 3_250,
+        9: 2_200,
+        10: 1_500,
+    }
+    for i in range(11):
+        if capacity >= tiers2steps[i]:
+            return "S" if i == 0 else str(i)
+    return "11"
+
+
 @dataclass(frozen=True)
 class _BasicStadium:
     name: str
@@ -61,8 +115,8 @@ class _BasicStadium:
     capacity: int
 
     @property
-    def as_dict(self) -> dict[str, str | tuple[str, ...] | int]:
-        return {k: v for k, v in asdict(self).items() if k != "url"}
+    def tier(self) -> str:
+        return get_tier(self.capacity)
 
 
 def _scrape_basic_data() -> list[_BasicStadium]:
@@ -87,12 +141,8 @@ _KORONA_INAUGURATION = datetime(2006, 4, 1, 0, 0)
 
 
 @dataclass(frozen=True)
-class Stadium:
-    name: str
-    town: str
+class Stadium(_BasicStadium):
     country: str
-    clubs: tuple[str, ...]
-    capacity: int
     inauguration: datetime
     renovation: datetime | None
     cost: int | None  # in PLN
@@ -152,7 +202,7 @@ def _scrape_details(basic_data: _BasicStadium) -> Stadium:
                 pass
 
     return Stadium(
-        **basic_data.as_dict,
+        **asdict(basic_data),
         country=country,
         inauguration=inauguration,
         renovation=renovation,
