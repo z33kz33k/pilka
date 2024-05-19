@@ -7,6 +7,7 @@
     @author: z33k
 
 """
+import os
 import logging
 from datetime import datetime
 from functools import wraps
@@ -153,7 +154,7 @@ def init_log() -> None:
     global _logging_initialized
 
     if not _logging_initialized:
-        output_dir = Path(__file__).parent.parent.parent / "temp" / "logs"
+        output_dir = Path(os.getcwd()) / "temp" / "logs"
         if output_dir.exists():
             logfile = output_dir / "stadiums.log"
         else:
@@ -182,4 +183,5 @@ def init_log() -> None:
 def timedelta2years(start: datetime, stop: datetime) -> float:
     delta = stop - start
     return delta.total_seconds() / SECONDS_IN_YEAR
+
 

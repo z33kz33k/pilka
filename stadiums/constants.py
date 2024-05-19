@@ -7,6 +7,7 @@
     @author: z33k
 
 """
+import os
 import logging
 from pathlib import Path
 from typing import Any, Callable, Dict, Tuple, TypeVar
@@ -25,4 +26,4 @@ FILENAME_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
 READABLE_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 SECONDS_IN_YEAR = 365.25 * 24 * 60 * 60  # with leap years
 
-OUTPUT_DIR = Path("temp") / "output"
+OUTPUT_DIR = Path(os.getcwd()) / "temp" / "output"
