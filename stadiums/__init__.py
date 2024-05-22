@@ -12,10 +12,12 @@ import logging
 import random
 import re
 from collections import defaultdict
-from dataclasses import dataclass, asdict, is_dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from operator import itemgetter
 from typing import Any, Iterable, Iterator
+
+from bs4 import Tag
 
 from stadiums.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
@@ -23,7 +25,8 @@ from stadiums.utils import extract_int, from_iterable, getdir, init_log
 from stadiums.utils.scrape import getsoup, throttled
 
 init_log()
-URL = "http://stadiony.net/stadiony/{}"
+URL = "http://stadiumdb.com/stadiums/{}"
+URL_PL = "http://stadiony.net/stadiony/{}"
 _log = logging.getLogger(__name__)
 
 
@@ -126,9 +129,13 @@ class _BasicStadium:
 
 
 # TODO: include Town data
-def scrape_basic_data(country_suffix="pol", tables_count=4) -> Iterator[_BasicStadium]:
-    soup = getsoup(URL.format(country_suffix))
-    tables = soup.find_all("table", limit=tables_count)
+def scrape_basic_data(country_suffix="pol", tables_count=0) -> Iterator[_BasicStadium]:
+    url = URL_PL if country_suffix == "pol" else URL
+    soup = getsoup(url.format(country_suffix))
+    if tables_count:
+        tables = soup.find_all("table", limit=tables_count)
+    else:
+        tables = soup.find_all("table")
     for table in tables:
         for row in table.find_all("tr")[1:]:
             name_tag, town_tag, clubs_tag, cap_tag = row.find_all("td")
@@ -158,6 +165,7 @@ class Stadium(_BasicStadium):
     renovation: datetime | None
     cost: Cost | None
     illumination_lux: int | None
+    description: str | None
 
     @property
     def is_modern(self) -> bool:
@@ -191,81 +199,160 @@ class Stadium(_BasicStadium):
         )
 
 
-_DATE_REGEX = re.compile(r"\b(?:\d{2}\.\d{2}\.\d{4}|\d{4})(?:\s*\w+)*\b")
-_DT_FMT = "%d.%m.%Y"
-
-
 def throttling_delay() -> float:
     return round(random.uniform(0.4, 0.6), 3)
 
 
-@throttled(throttling_delay)
-def _scrape_details(basic_data: _BasicStadium) -> Stadium:
-    soup = getsoup(basic_data.url)
-    table = soup.find("table", class_="stadium-info")
-    country, address = None, None
-    inauguration, renovation, cost, illumination = None, None, None, None
-    for row in table.find_all("tr"):
-        match row.find("th").text:
-            case "Kraj":
+class _DetailsScraper:
+    DOT_DATE_REGEX = re.compile(r"\b(?:\d{2}\.\d{2}\.\d{4}|\d{2}\.\d{4}|\d{4})(?:\s*\w+)*\b")
+    SLASH_DATE_REGEX = re.compile(r"\b(?:\d{2}\/\d{2}\/\d{4}|\d{2}\/\d{4}|\d{4})(?:\s*\w+)*\b")
+    DMY_DT_FMT = "%d.%m.%Y"
+    MY_DT_FMT = "%m.%Y"
+    ROWS = {
+        "country": "Country",
+        "address": "Address",
+        "inauguration": "Inauguration",
+        "renovation": "Renovations",
+        "cost": "Cost",
+        "illumination": "Floodlights",
+    }
+
+    def __init__(self, basic_data: _BasicStadium) -> None:
+        self._basic_data = basic_data
+        self._soup = getsoup(self._basic_data.url)
+
+    @classmethod
+    def _parse_inauguration(cls, row: Tag) -> datetime | None:
+        text = row.find("td").text.strip()
+        if "/" in text:
+            date = cls.SLASH_DATE_REGEX.search(text)
+        else:
+            date = cls.DOT_DATE_REGEX.search(text)
+        if date:
+            date = date.group()
+            if len(date) == 10:
+                return datetime.strptime(date, cls.DMY_DT_FMT)
+            elif len(date) == 7:
+                return datetime.strptime(date, cls.MY_DT_FMT)
+            else:
+                return datetime(int(date), 1, 1)
+        return None
+
+    @staticmethod
+    def _parse_renovation(row: Tag) -> datetime | None:
+        years = []
+        for token in row.find("td").text.strip().split(", "):
+            if "-" in token:
+                years.extend(token.split("-"))
+            elif "–" in token:
+                years.extend(token.split("–"))
+            else:
+                years.append(token)
+        if years:
+            renovation = max(int(year) for year in years)
+            return datetime(renovation, 1, 1)
+        return None
+
+    def _parse_cost(self, row: Tag) -> Cost | None:
+        text = row.find("td").text.strip()
+        if "(" in text:
+            text, *_ = text.split("(")
+            text = text.strip()
+        if text.startswith("ok. "):
+            text = text[4:]
+        if text.count(" ") < 2:
+            return None
+
+        currency, amount, qualifier, *_ = text.split()
+        if qualifier not in ("million", "billion"):
+            _log.warning(
+                f"Unexpected cost qualifier: {qualifier!r} for {self._basic_data.url!r}")
+        else:
+            amount = extract_int(text)
+            amount *= 1_000_000_000 if qualifier == "billion" else 1_000_000
+            return Cost(amount, currency)
+
+        return None
+
+    def _parse_description(self) -> str | None:
+        article = self._soup.find("article", class_="stadium-description")
+        if article is None:
+            return None
+        lines = []
+        h2 = article.find("h2")
+        if h2 is not None:
+            lines.append(h2.text)
+        lines += [p.text for p in article.find_all("p")]
+        return "\n".join(lines) if lines else None
+
+    @throttled(throttling_delay)
+    def scrape(self) -> Stadium:
+        table = self._soup.find("table", class_="stadium-info")
+        country, address = None, None
+        inauguration, renovation, cost, illumination = None, None, None, None
+        for row in table.find_all("tr"):
+            header = row.find("th").text
+            if header == self.ROWS["country"]:
                 country = row.find("td").find("a").text.strip().strip('"')
-            case "Adres":
+            elif header == self.ROWS["address"]:
                 address = row.find("td").text.strip()
-            case "Inauguracja":
-                text = row.find("td").text.strip()
-                date = _DATE_REGEX.search(text)
-                if date:
-                    date = date.group()
-                    inauguration = datetime.strptime(date, _DT_FMT) if len(
-                        date) == 10 else datetime(int(date), 1, 1)
-            case "Renowacje":
-                years = []
-                for token in row.find("td").text.strip().split(", "):
-                    if "-" in token:
-                        years.extend(token.split("-"))
-                    elif "–" in token:
-                        years.extend(token.split("–"))
-                    else:
-                        years.append(token)
-                renovation = max(int(year) for year in years)
-                renovation = datetime(renovation, 1, 1)
-            case "Koszt":
-                text = row.find("td").text.strip()
-                if "(" in text:
-                    text, *_ = text.split("(")
-                    text = text.strip()
-                if text.startswith("ok. "):
-                    text = text[4:]
-
-                pattern = r"^([\d,]+)\s*([a-zA-Z]+)\s*([a-zA-Zł]+)$"
-                match = re.match(pattern, text)
-                if match:
-                    amount, qualifier, currency = match.group(1), match.group(2), match.group(3)
-                    if qualifier not in ("mln", "mld"):
-                        _log.warning(f"Unexpected cost qualifier: {qualifier!r} for {basic_data.url!r}")
-                    else:
-                        amount = extract_int(text)
-                        amount *= 1_000_000_000 if qualifier == "mld" else 1_000_000
-                        cost = Cost(amount, currency)
-            case "Oświetlenie":
+            elif header == self.ROWS["inauguration"]:
+                inauguration = self._parse_inauguration(row)
+            elif header == self.ROWS["renovation"]:
+                renovation = self._parse_renovation(row)
+            elif header == self.ROWS["cost"]:
+                cost = self._parse_cost(row)
+            elif header == self.ROWS["illumination"]:
                 illumination = extract_int(row.find("td").text.strip())
-            case _:
-                pass
 
-    return Stadium(
-        **asdict(basic_data),
-        country=country,
-        address=address,
-        inauguration=inauguration,
-        renovation=renovation,
-        cost=cost,
-        illumination_lux=illumination
-    )
+        return Stadium(
+            **asdict(self._basic_data),
+            country=country,
+            address=address,
+            inauguration=inauguration,
+            renovation=renovation,
+            cost=cost,
+            illumination_lux=illumination,
+            description=self._parse_description()
+        )
+
+
+class _DetailsScraperPl(_DetailsScraper):
+    ROWS = {
+        "country": "Kraj",
+        "address": "Adres",
+        "inauguration": "Inauguracja",
+        "renovation": "Renowacje",
+        "cost": "Koszt",
+        "illumination": "Oświetlenie",
+    }
+
+    def _parse_cost(self, row: Tag) -> Cost | None:  # override
+        text = row.find("td").text.strip()
+        if "(" in text:
+            text, *_ = text.split("(")
+            text = text.strip()
+        if text.startswith("ok. "):
+            text = text[4:]
+        if text.count(" ") < 2:
+            return None
+
+        amount, qualifier, currency, *_ = text.split()
+        if qualifier not in ("mln", "mld"):
+            _log.warning(
+                f"Unexpected cost qualifier: {qualifier!r} for {self._basic_data.url!r}")
+        else:
+            amount = extract_int(text)
+            amount *= 1_000_000_000 if qualifier == "mld" else 1_000_000
+            return Cost(amount, currency)
+
+        return None
 
 
 def scrape_stadiums(country="pol") -> Iterator[Stadium]:
+    scraper = _DetailsScraperPl if country == "pol" else _DetailsScraper
     for stadium in scrape_basic_data(country_suffix=country):
-        yield _scrape_details(stadium)
+        yield scraper(stadium).scrape()
 
 
 @dataclass(frozen=True)
