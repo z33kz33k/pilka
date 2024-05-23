@@ -28,6 +28,9 @@ class ParsingError(ValueError):
     """
 
 
+http_requests_count = 0
+
+
 @timed("request")
 @type_checker(str)
 def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
@@ -41,7 +44,9 @@ def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
         a BeautifulSoup object
     """
     _log.info(f"Requesting: {url!r}")
+    global http_requests_count
     response = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
+    http_requests_count += 1
     if str(response.status_code)[0] in ("4", "5"):
         msg = f"Request failed with: '{response.status_code} {response.reason}'"
         if response.status_code in (502, 503, 504):
@@ -68,11 +73,32 @@ def throttled(delay: float | Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
-            if callable(delay):
-                amount = delay()
-            else:
-                amount = delay
+            amount = delay() if callable(delay) else delay
             throttle(amount)
+            return result
+        return wrapper
+    return decorate
+
+
+def http_requests_counted(operation="") -> Callable:
+    """Count HTTP requests done the decorated operation.
+
+    Args:
+        name of the operation
+
+    Returns:
+        the decorated function
+    """
+    def decorate(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            global http_requests_count
+            initial_count = http_requests_count
+            result = func(*args, **kwargs)
+            requests_made = http_requests_count - initial_count
+            nonlocal operation
+            operation = operation or f"{func.__name__!r}"
+            _log.info(f"Needed {requests_made} HTTP request(s) to carry out {operation}")
             return result
         return wrapper
     return decorate

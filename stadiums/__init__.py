@@ -11,6 +11,7 @@ import json
 import logging
 import random
 import re
+import traceback
 from collections import defaultdict
 from dataclasses import dataclass, asdict
 from datetime import datetime
@@ -21,12 +22,10 @@ from bs4 import Tag
 
 from stadiums.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
-from stadiums.utils import extract_int, from_iterable, getdir, init_log
-from stadiums.utils.scrape import getsoup, throttled
+from stadiums.utils import extract_int, from_iterable, getdir, init_log, timed
+from stadiums.utils.scrape import getsoup, http_requests_counted, throttled
 
 init_log()
-URL = "http://stadiumdb.com/stadiums/{}"
-URL_PL = "http://stadiony.net/stadiony/{}"
 _log = logging.getLogger(__name__)
 
 
@@ -128,10 +127,14 @@ class _BasicStadium:
         return get_tier(self.capacity)
 
 
+URL = "http://stadiumdb.com/stadiums/{}"
+URL_PL = "http://stadiony.net/stadiony/{}"
+
+
 # TODO: include Town data
-def scrape_basic_data(country_suffix="pol", tables_count=0) -> Iterator[_BasicStadium]:
-    url = URL_PL if country_suffix == "pol" else URL
-    soup = getsoup(url.format(country_suffix))
+def scrape_basic_data(country_id="pol", tables_count=0) -> Iterator[_BasicStadium]:
+    url = URL_PL if country_id == "pol" else URL
+    soup = getsoup(url.format(country_id))
     if tables_count:
         tables = soup.find_all("table", limit=tables_count)
     else:
@@ -143,7 +146,8 @@ def scrape_basic_data(country_suffix="pol", tables_count=0) -> Iterator[_BasicSt
             town = town_tag.text.strip()
             clubs = [club.strip() for club in clubs_tag.text.split(", ") if club.strip() != "-"]
             # trim redundant town info in clubs
-            clubs = [club.replace(f" {town}", "") for club in clubs]
+            # TODO: decide if not abandon the idea
+            # clubs = [club.replace(f" {town}", "") for club in clubs]
             cap = extract_int(cap_tag.text)
             yield _BasicStadium(name, url, town, tuple(clubs), cap)
 
@@ -200,7 +204,7 @@ class Stadium(_BasicStadium):
 
 
 def throttling_delay() -> float:
-    return round(random.uniform(0.4, 0.6), 3)
+    return round(random.uniform(0.4, 1.2), 3)
 
 
 class _DetailsScraper:
@@ -231,9 +235,11 @@ class _DetailsScraper:
         if date:
             date = date.group()
             if len(date) == 10:
-                return datetime.strptime(date, cls.DMY_DT_FMT)
+                fmt = cls.DMY_DT_FMT.replace(".", "/") if "/" in date else cls.DMY_DT_FMT
+                return datetime.strptime(date, fmt)
             elif len(date) == 7:
-                return datetime.strptime(date, cls.MY_DT_FMT)
+                fmt = cls.MY_DT_FMT.replace(".", "/") if "/" in date else cls.MY_DT_FMT
+                return datetime.strptime(date, fmt)
             else:
                 return datetime(int(date), 1, 1)
         return None
@@ -241,7 +247,11 @@ class _DetailsScraper:
     @staticmethod
     def _parse_renovation(row: Tag) -> datetime | None:
         years = []
-        for token in row.find("td").text.strip().split(", "):
+        text = row.find("td").text.strip()
+        pattern = r"\(.*?\)"
+        cleaned_text = re.sub(pattern, "", text)  # get rid of anything within parentheses
+        for token in cleaned_text.split(","):
+            token = token.strip()
             if "-" in token:
                 years.extend(token.split("-"))
             elif "–" in token:
@@ -249,7 +259,10 @@ class _DetailsScraper:
             else:
                 years.append(token)
         if years:
-            renovation = max(int(year) for year in years)
+            try:
+                renovation = max(int(year) for year in years)
+            except ValueError:  # very rare cases where a year is actually a month and a year
+                return None
             return datetime(renovation, 1, 1)
         return None
 
@@ -264,6 +277,8 @@ class _DetailsScraper:
             return None
 
         currency, amount, qualifier, *_ = text.split()
+        # TODO: improve to cut down warning cases - there are two prevalent scenarios: 1)
+        #  qualifier merged with amount 2) opposite order (currency at the end)
         if qualifier not in ("million", "billion"):
             _log.warning(
                 f"Unexpected cost qualifier: {qualifier!r} for {self._basic_data.url!r}")
@@ -349,15 +364,40 @@ class _DetailsScraperPl(_DetailsScraper):
         return None
 
 
-def scrape_stadiums(country="pol") -> Iterator[Stadium]:
-    scraper = _DetailsScraperPl if country == "pol" else _DetailsScraper
-    for stadium in scrape_basic_data(country_suffix=country):
+def scrape_stadiums(country_id="pol") -> Iterator[Stadium]:
+    scraper = _DetailsScraperPl if country_id == "pol" else _DetailsScraper
+    for stadium in scrape_basic_data(country_id=country_id):
         yield scraper(stadium).scrape()
 
 
 @dataclass(frozen=True)
-class StadiumsDump:
-    country: str
+class Country:
+    name: str
+    id: str
+    confederation: str
+
+
+POLAND = Country(name='Poland', id='pol', confederation='UEFA')
+
+
+def scrape_countries() -> Iterator[Country]:
+    url = "http://stadiumdb.com/stadiums"
+    soup = getsoup(url)
+    confederations = [h2.text for h2 in soup.find_all("h2")]
+    uls = soup.find_all("ul", class_="country-list")
+    for idx, ul in enumerate(uls):
+        for li in ul.find_all("li"):
+            a: Tag = li.find("a")
+            if a is not None:
+                suburl = a.attrs["href"]
+                *_, country_id = suburl.split("/")
+                name, *_ = a.text.split("(")
+                yield Country(name.strip(), country_id, confederations[idx])
+
+
+@dataclass(frozen=True)
+class CountryStadiums:
+    country: Country
     url: str
     stadiums: tuple[Stadium, ...]
 
@@ -368,17 +408,21 @@ class StadiumsDump:
         return {**data}
 
 
-def scrape_stadiums_per_country(*countries: str) -> Iterator[StadiumsDump]:
-    for country in countries:
-        data = [*scrape_stadiums(country)]
-        url = URL.format(country)
-        if not data:
-            _log.warning(f"Nothing has been scraped for {url!r}")
-            return
-        yield StadiumsDump(data[0].country, url, tuple(data))
+@http_requests_counted("country scraping")
+@timed("country scraping", precision=2)
+def scrape_country_stadiums(country: Country) -> CountryStadiums | None:
+    _log.info(f"Scraping {country.name!r} started")
+    data = [*scrape_stadiums(country.id)]
+    url = URL.format(country.id)
+    if not data:
+        _log.warning(f"Nothing has been scraped for {url!r}")
+        return
+    return CountryStadiums(country, url, tuple(data))
 
 
-def dump_stadiums(*countries: str, **kwargs: Any) -> None:
+@http_requests_counted("dump")
+@timed("dump", precision=0)
+def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
     """Scrape stadiums data and dump it to a JSON file.
 
     Recognized optional arguments:
@@ -391,31 +435,41 @@ def dump_stadiums(*countries: str, **kwargs: Any) -> None:
         countries: variable number of country specifiers
         kwargs: optional arguments
     """
-    countries = countries or ["pol"]
     now = datetime.now()
+    countries = countries or scrape_countries()
     data = {
         "timestamp": now.strftime(READABLE_TIMESTAMP_FORMAT),
-        "countries": [data.json for data in scrape_stadiums_per_country(*countries)]
+        "countries": []
     }
-    prefix = kwargs.get("prefix") or "stadiums"
-    prefix = f"{prefix}_" if not prefix.endswith("_") else prefix
-    use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
-        True
-    timestamp = f"_{now.strftime(FILENAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
-    output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
-    output_dir = getdir(output_dir, create_missing=False)
-    filename = kwargs.get("filename")
-    if filename:
-        filename = filename
-    else:
-        filename = f"{prefix}dump{timestamp}.json"
+    for country in countries:
+        try:
+            country_stadiums = scrape_country_stadiums(country)
+            if country_stadiums:
+                data["countries"].append(country_stadiums.json)
+        except Exception as e:
+            _log.error(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
-    dest = output_dir / filename
-    with dest.open("w", encoding="utf8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    try:
+        prefix = kwargs.get("prefix") or "stadiums"
+        prefix = f"{prefix}_" if not prefix.endswith("_") else prefix
+        use_timestamp = kwargs.get("use_timestamp") if kwargs.get("use_timestamp") is not None else \
+            True
+        timestamp = f"_{now.strftime(FILENAME_TIMESTAMP_FORMAT)}" if use_timestamp else ""
+        output_dir = kwargs.get("output_dir") or kwargs.get("outputdir") or OUTPUT_DIR
+        output_dir = getdir(output_dir, create_missing=False)
+        filename = kwargs.get("filename")
+        if filename:
+            filename = filename
+        else:
+            filename = f"{prefix}dump{timestamp}.json"
 
-    if dest.exists():
-        _log.info(f"Successfully dumped '{dest}'")
+        dest = output_dir / filename
+        with dest.open("w", encoding="utf8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        if dest.exists():
+            _log.info(f"Successfully dumped '{dest}'")
+    except Exception as e:
+        _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
 
 # CLUB_NAMES = sorted({club for stadium in STADIUMS for club in stadium.clubs})
