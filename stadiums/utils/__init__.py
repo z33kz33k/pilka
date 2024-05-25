@@ -7,13 +7,15 @@
     @author: z33k
 
 """
+import inspect
 import os
 import logging
+import sys
 from datetime import datetime
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Callable, Iterable, Optional, Protocol, Sequence
+from typing import Callable, Iterable, Optional, Protocol, Sequence, Set, Type
 
 import langcodes
 import pandas as pd
@@ -185,3 +187,11 @@ def timedelta2years(start: datetime, stop: datetime) -> float:
     return delta.total_seconds() / SECONDS_IN_YEAR
 
 
+def get_classes_in_current_module() -> dict[str, Type]:
+    current_module = sys.modules[__name__]
+    return {name: obj for name, obj in inspect.getmembers(current_module, inspect.isclass)
+            if obj.__module__ == current_module.__name__}
+
+
+def get_properties(cls: Type) -> Set[str]:
+    return {name for name, obj in inspect.getmembers(cls) if isinstance(obj, property)}
