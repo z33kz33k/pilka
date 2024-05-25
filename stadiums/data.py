@@ -54,9 +54,9 @@ class _JsonSerializable:
     @classmethod
     def _deserialize_datetime(cls, data: Json, field: Field) -> Json:
         try:
-            if field.type is datetime:
+            if datetime.__name__ in str(field.type):
                 data[field.name] = datetime.strptime(data[field.name], READABLE_TIMESTAMP_FORMAT)
-            elif field.type is list and isinstance(data[field.name], list):
+            elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
                 data[field.name] = [
                     datetime.strptime(item, READABLE_TIMESTAMP_FORMAT)
                     for item in data[field.name]]

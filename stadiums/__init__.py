@@ -60,7 +60,7 @@ def scrape_basic_data(country_id="pol") -> Iterator[_BasicStadium]:
     url = URL_PL if is_pl else URL
     towns = {t.name: t for t in scrape_polish_towns()} if is_pl else None
     soup = getsoup(url.format(country_id))
-    leagues = [h2.text for h2 in soup.find_all("h2")]
+    leagues = [h2.text.strip() for h2 in soup.find_all("h2")]
     has_national = leagues[0] in ("National Stadium", "Stadion Narodowy")
     for idx, table in enumerate(soup.find_all("table")):
         for row in table.find_all("tr")[1:]:
@@ -282,7 +282,7 @@ def scrape_stadiums(country_id="pol") -> Iterator[Stadium]:
 def scrape_countries() -> Iterator[Country]:
     url = "http://stadiumdb.com/stadiums"
     soup = getsoup(url)
-    confederations = [h2.text for h2 in soup.find_all("h2")]
+    confederations = [h2.text.strip() for h2 in soup.find_all("h2")]
     uls = soup.find_all("ul", class_="country-list")
     for idx, ul in enumerate(uls):
         for li in ul.find_all("li"):
