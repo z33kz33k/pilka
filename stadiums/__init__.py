@@ -30,10 +30,17 @@ init_log()
 _log = logging.getLogger(__name__)
 
 
+class ScrapingError(IOError):
+    """Raised when scraping produces unexpected results.
+    """
+
+
 def scrape_polish_towns() -> list[Town]:
     url = "https://pl.wikipedia.org/wiki/Dane_statystyczne_o_miastach_w_Polsce"
     soup = getsoup(url)
     table = soup.find("table", class_="wikitable")
+    if table is None:
+        raise ScrapingError(f"Page at {url} contains no 'table' tag of class 'wikitable'")
     towns = []
     for tr_tag in table.select("tbody tr"):
         try:
@@ -158,6 +165,9 @@ class DetailsScraper:
     @throttled(throttling_delay)
     def scrape(self) -> Stadium:
         table = self._soup.find("table", class_="stadium-info")
+        if table is None:
+            raise ScrapingError(
+                f"Page at {self._basic_data.url} contains no 'table' tag of class 'stadium-info'")
         country, address = None, None
         inauguration, renovation, cost, illumination = None, None, None, None
         for row in table.find_all("tr"):
@@ -276,7 +286,10 @@ class DetailsScraperPl(DetailsScraper):
 def scrape_stadiums(country_id="pol") -> Iterator[Stadium]:
     scraper = DetailsScraperPl if country_id == "pol" else DetailsScraper
     for stadium in scrape_basic_data(country_id=country_id):
-        yield scraper(stadium).scrape()
+        try:
+            yield scraper(stadium).scrape()
+        except ScrapingError as e:
+            _log.error(f"Scraping of {stadium.name} failed with: {e}")
 
 
 def scrape_countries() -> Iterator[Country]:

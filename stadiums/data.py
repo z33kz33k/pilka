@@ -11,7 +11,7 @@ from dataclasses import Field, asdict, dataclass, fields
 from datetime import datetime
 from typing import Type
 
-from stadiums.constants import Json, READABLE_TIMESTAMP_FORMAT, T
+from stadiums.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
 from stadiums.utils import get_classes_in_current_module, get_properties
 
 
@@ -23,7 +23,7 @@ def _serialize_datetime(data: Json) -> Json:  # recursive
         for k, v in data.items():
             data[k] = _serialize_datetime(v)
     elif isinstance(data, datetime):
-        data = data.strftime(READABLE_TIMESTAMP_FORMAT)
+        data = data.strftime(CONCISE_TIMESTAMP_FORMAT)
     return data
 
 
@@ -55,10 +55,10 @@ class _JsonSerializable:
     def _deserialize_datetime(cls, data: Json, field: Field) -> Json:
         try:
             if datetime.__name__ in str(field.type):
-                data[field.name] = datetime.strptime(data[field.name], READABLE_TIMESTAMP_FORMAT)
+                data[field.name] = datetime.strptime(data[field.name], CONCISE_TIMESTAMP_FORMAT)
             elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
                 data[field.name] = [
-                    datetime.strptime(item, READABLE_TIMESTAMP_FORMAT)
+                    datetime.strptime(item, CONCISE_TIMESTAMP_FORMAT)
                     for item in data[field.name]]
         except ValueError:
             pass
