@@ -12,22 +12,25 @@ from datetime import datetime
 from typing import Type
 
 from stadiums.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
-from stadiums.utils import get_classes_in_current_module, get_properties
+from stadiums.utils import get_classes_in_current_module, get_properties, tolist
 
 
-def _serialize_datetime(data: Json) -> Json:  # recursive
+def _serialize(data: Json) -> Json:  # recursive
+    if isinstance(data, tuple):
+        data = tolist(data)
     if isinstance(data, list):
         for idx, item in enumerate(data):
-            data[idx] = _serialize_datetime(item)
+            data[idx] = _serialize(item)
     elif isinstance(data, dict):
+        data = {k: v for k, v in data.items() if v is not None}
         for k, v in data.items():
-            data[k] = _serialize_datetime(v)
+            data[k] = _serialize(v)
     elif isinstance(data, datetime):
         data = data.strftime(CONCISE_TIMESTAMP_FORMAT)
     return data
 
 
-def _convert_from_json(types: dict[str, Type[T]], field: str,  data: Json) -> T | Json:
+def _reconstruct_from_json(types: dict[str, Type[T]], field: str,  data: Json) -> T | Json:
     if type_ := types.get(field.capitalize()):
         if hasattr(type_, "from_json"):
             return type_.from_json(data)
@@ -38,9 +41,9 @@ def _deserialize_substructs(data: Json) -> dict:
     types = get_classes_in_current_module()
     for k, v in data.items():
         if isinstance(v, tuple) and k.endswith("s"):
-            data[k] = tuple(_convert_from_json(types, k[:-1], item) for item in v)
+            data[k] = tuple(_reconstruct_from_json(types, k[:-1], item) for item in v)
         else:
-            data[k] = _convert_from_json(types, k, v)
+            data[k] = _reconstruct_from_json(types, k, v)
     return data
 
 
@@ -49,7 +52,7 @@ class _JsonSerializable:
     @property
     def json(self) -> Json:
         data = {k: v for k, v in asdict(self).items() if v is not None}
-        return _serialize_datetime(data)
+        return _serialize(data)
 
     @classmethod
     def _deserialize_datetime(cls, data: Json, field: Field) -> Json:
@@ -196,10 +199,11 @@ class Country(_JsonSerializable):
 
 
 POLAND = Country(name='Poland', id='pol', confederation='UEFA')
+HONG_KONG = Country(name="Hong Kong", id="hkg", confederation="AFC")
 
 
 @dataclass(frozen=True)
-class CountryStadiums(_JsonSerializable):
+class CountryStadiumsData(_JsonSerializable):
     country: Country
     url: str
     stadiums: tuple[Stadium, ...]

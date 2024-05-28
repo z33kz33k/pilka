@@ -195,3 +195,27 @@ def get_classes_in_current_module() -> dict[str, Type]:
 
 def get_properties(cls: Type) -> Set[str]:
     return {name for name, obj in inspect.getmembers(cls) if isinstance(obj, property)}
+
+
+def totuple(lst: list) -> tuple:
+    """Convert ``lst`` and any list it contains (no matter the nesting level) recursively to tuple.
+
+    Taken from:
+        https://stackoverflow.com/a/27050037/4465708
+    """
+    return tuple(totuple(i) if isinstance(i, list) else i for i in lst)
+
+
+def tolist(tpl: tuple) -> list:
+    """Convert ``tpl`` and any tuple it contains (no matter the nesting level) recursively to list.
+
+    Taken from and maid in reverse:
+        https://stackoverflow.com/a/27050037/4465708
+    """
+    return list(tolist(i) if isinstance(i, tuple) else i for i in tpl)
+
+
+def cleardir(obj: object) -> list[str]:
+    """Return ``dir(obj)`` without extraneous fluff.
+    """
+    return [attr for attr in dir(obj) if not attr.startswith("_")]

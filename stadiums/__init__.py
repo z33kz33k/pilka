@@ -22,7 +22,7 @@ from bs4 import Tag
 
 from stadiums.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
-from stadiums.data import Cost, Country, CountryStadiums, League, Stadium, Town, _BasicStadium
+from stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, _BasicStadium
 from stadiums.utils import extract_int, from_iterable, getdir, init_log, timed
 from stadiums.utils.scrape import getsoup, http_requests_counted, throttled
 
@@ -309,14 +309,14 @@ def scrape_countries() -> Iterator[Country]:
 
 @http_requests_counted("country scraping")
 @timed("country scraping", precision=2)
-def scrape_country_stadiums(country: Country) -> CountryStadiums | None:
+def scrape_country_stadiums(country: Country) -> CountryStadiumsData | None:
     _log.info(f"Scraping {country.name!r} started")
     stadiums = [*scrape_stadiums(country.id)]
     url = URL.format(country.id)
     if not stadiums:
         _log.warning(f"Nothing has been scraped for {url!r}")
         return
-    return CountryStadiums(country, url, tuple(stadiums))
+    return CountryStadiumsData(country, url, tuple(stadiums))
 
 
 @http_requests_counted("dump")
@@ -342,9 +342,9 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
     }
     for country in countries:
         try:
-            country_stadiums = scrape_country_stadiums(country)
-            if country_stadiums:
-                data["countries"].append(country_stadiums.json)
+            country_stadiums_data = scrape_country_stadiums(country)
+            if country_stadiums_data:
+                data["countries"].append(country_stadiums_data.json)
         except Exception as e:
             _log.error(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
