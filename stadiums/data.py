@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Type
 
 from stadiums.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
-from stadiums.utils import get_classes_in_current_module, get_properties, tolist
+from stadiums.utils import get_classes_in_module, get_properties, tolist, totuple
 
 
 def _serialize(data: Json) -> Json:  # recursive
@@ -31,6 +31,8 @@ def _serialize(data: Json) -> Json:  # recursive
 
 
 def _reconstruct_from_json(types: dict[str, Type[T]], field: str,  data: Json) -> T | Json:
+    if not isinstance(data, dict):  # not a structure to reconstruct
+        return data
     if type_ := types.get(field.capitalize()):
         if hasattr(type_, "from_json"):
             return type_.from_json(data)
@@ -38,10 +40,10 @@ def _reconstruct_from_json(types: dict[str, Type[T]], field: str,  data: Json) -
 
 
 def _deserialize_substructs(data: Json) -> dict:
-    types = get_classes_in_current_module()
+    types = get_classes_in_module(__name__)
     for k, v in data.items():
-        if isinstance(v, tuple) and k.endswith("s"):
-            data[k] = tuple(_reconstruct_from_json(types, k[:-1], item) for item in v)
+        if isinstance(v, list) and k.endswith("s"):
+            data[k] = [_reconstruct_from_json(types, k[:-1], item) for item in v]
         else:
             data[k] = _reconstruct_from_json(types, k, v)
     return data
@@ -69,13 +71,17 @@ class _JsonSerializable:
 
     @classmethod
     def from_json(cls, data: Json) -> "_JsonSerializable":
-        data = {k: v for k, v in data.items() if k not in get_properties(cls)}
+        field_names = {f.name for f in fields(cls)}
+        data = {k: v for k, v in data.items() if k not in get_properties(cls) and k in field_names}
         for f in fields(cls):
             if data.get(f.name) is None:
                 data[f.name] = None
             else:
                 data = cls._deserialize_datetime(data, f)
         data = _deserialize_substructs(data)
+        for f in fields(cls):
+            if isinstance(data.get(f.name), list):
+                data[f.name] = totuple(data[f.name])
         return cls(**data)
 
 

@@ -187,8 +187,8 @@ def timedelta2years(start: datetime, stop: datetime) -> float:
     return delta.total_seconds() / SECONDS_IN_YEAR
 
 
-def get_classes_in_current_module() -> dict[str, Type]:
-    current_module = sys.modules[__name__]
+def get_classes_in_module(module_name: str) -> dict[str, Type]:
+    current_module = sys.modules[module_name]
     return {name: obj for name, obj in inspect.getmembers(current_module, inspect.isclass)
             if obj.__module__ == current_module.__name__}
 
