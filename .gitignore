@@ -4,6 +4,7 @@
 /research
 /input
 /output
+/var
 *service_account.json
 *api_creds.json
 run.py

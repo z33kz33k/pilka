@@ -156,7 +156,7 @@ def init_log() -> None:
     global _logging_initialized
 
     if not _logging_initialized:
-        output_dir = Path(os.getcwd()) / "temp" / "logs"
+        output_dir = Path(os.getcwd()) / "var" / "logs"
         if output_dir.exists():
             logfile = output_dir / "pilka.log"
         else:
