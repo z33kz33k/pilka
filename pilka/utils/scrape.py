@@ -24,11 +24,6 @@ from pilka.utils.check_type import type_checker
 _log = logging.getLogger(__name__)
 
 
-class ParsingError(ValueError):
-    """Raised whenever parser's assumptions are not met.
-    """
-
-
 class ScrapingError(IOError):
     """Raised whenever scraping produces unexpected results.
     """

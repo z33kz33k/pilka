@@ -205,6 +205,7 @@ class Country(_JsonSerializable):
 
 
 POLAND = Country(name='Poland', id='pol', confederation='UEFA')
+ENGLAND = Country(name='England', id='eng', confederation='UEFA')
 HONG_KONG = Country(name="Hong Kong", id="hkg", confederation="AFC")
 
 

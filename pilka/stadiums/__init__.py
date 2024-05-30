@@ -24,7 +24,7 @@ from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
 from pilka.stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, \
     BasicStadium
-from pilka.utils import extract_int, getdir, timed
+from pilka.utils import extract_float, extract_int, getdir, timed
 from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 
 _log = logging.getLogger(__name__)
@@ -57,7 +57,8 @@ URL = "http://stadiumdb.com/stadiums/{}"
 URL_PL = "http://stadiony.net/stadiony/{}"
 
 
-def scrape_basic_data(country_id="pol") -> Iterator[BasicStadium]:
+def scrape_basic_data(country_id="pol") -> list[BasicStadium]:
+    basic_stadiums = []
     is_pl = country_id == "pol"
     url = URL_PL if is_pl else URL
     towns = {t.name: t for t in scrape_polish_towns()} if is_pl else None
@@ -75,7 +76,9 @@ def scrape_basic_data(country_id="pol") -> Iterator[BasicStadium]:
             clubs = [club.strip() for club in clubs_tag.text.split(", ") if club.strip() != "-"]
             cap = extract_int(cap_tag.text)
             league = League(leagues[idx], idx if has_national else idx + 1)
-            yield BasicStadium(name, url, town, tuple(clubs), cap, league)
+            basic_stadiums.append(BasicStadium(name, url, town, tuple(clubs), cap, league))
+
+    return basic_stadiums
 
 
 def throttling_delay() -> float:
@@ -96,6 +99,8 @@ class DetailsScraper:
         "cost": "Cost",
         "illumination": "Floodlights",
     }
+    # DEBUG
+    TEMP_FIELDS: dict[str, str] = {}
 
     def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
@@ -166,7 +171,11 @@ class DetailsScraper:
         country, address = None, None
         inauguration, renovation, cost, illumination = None, None, None, None
         for row in table.find_all("tr"):
-            header = row.find("th").text
+            header = row.find("th").text.strip()
+            # DEBUG
+            if header:
+                self.TEMP_FIELDS[header] = self._basic_data.url
+
             if header == self.ROWS["country"]:
                 country = row.find("td").find("a").text.strip().strip('"')
             elif header == self.ROWS["address"]:
@@ -178,7 +187,8 @@ class DetailsScraper:
             elif header == self.ROWS["cost"]:
                 cost = self._parse_cost(row)
             elif header == self.ROWS["illumination"]:
-                illumination = extract_int(row.find("td").text.strip())
+                text = row.find("td").text.strip()
+                illumination = extract_int(text) if not all(ch.isalpha() for ch in text) else None
 
         return Stadium(
             **asdict(self._basic_data),
@@ -218,10 +228,11 @@ class _CostSubParser:
         return -1, ""
 
     @classmethod
-    def _get_amount(cls, base_amount: int, qualifier: str) -> int:
+    def _get_amount(cls, amount_text: str, qualifier: str) -> int:
+        base_amount = extract_float(amount_text)
         if qualifier in cls.QUALIFIERS[:2]:
-            return base_amount * 1_000_000
-        return base_amount * 1_000_000_000
+            return int(base_amount * 1_000_000)
+        return int(base_amount * 1_000_000_000)
 
     def _handle_merged_qualifier(self) -> Cost | None:
         idx, found = self._identify_qualifier(*self._tokens)
@@ -232,16 +243,15 @@ class _CostSubParser:
         else:
             currency, qualifier = self._tokens
         try:
-            amount = extract_int(qualifier)
-            return Cost(self._get_amount(amount, found), currency)
+            return Cost(self._get_amount(qualifier, found), currency)
         except ValueError:
             return None
 
     def parse(self) -> Cost | None:
         # text = row.find("td").text.strip()
-        if len(self._tokens) == 1:
+        if len(self._tokens) == 2:
             return self._handle_merged_qualifier()
-        elif len(self._tokens) == 2:
+        elif len(self._tokens) == 3:
             idx, found = self._identify_qualifier(*self._tokens)
             if idx == 1:
                 amount, _, currency = self._tokens
@@ -251,6 +261,7 @@ class _CostSubParser:
                 return None
             return Cost(self._get_amount(amount, found), currency)
 
+        _log.warning(f"Unexpected cost string: {self._text!r}")
         return None
 
 
@@ -280,7 +291,9 @@ class DetailsScraperPl(DetailsScraper):
 
 def scrape_stadiums(country_id="pol") -> Iterator[Stadium]:
     scraper = DetailsScraperPl if country_id == "pol" else DetailsScraper
-    for stadium in scrape_basic_data(country_id=country_id):
+    basic_stadiums = scrape_basic_data(country_id=country_id)
+    _log.info(f"Only {len(basic_stadiums)} stadium(s) to go...")
+    for stadium in basic_stadiums:
         try:
             yield scraper(stadium).scrape()
         except ScrapingError as e:
@@ -305,7 +318,7 @@ def scrape_countries() -> Iterator[Country]:
 @http_requests_counted("country scraping")
 @timed("country scraping", precision=2)
 def scrape_country_stadiums(country: Country) -> CountryStadiumsData | None:
-    _log.info(f"Scraping {country.name!r} started")
+    _log.info(f"Scraping {country.name!r} started...")
     stadiums = [*scrape_stadiums(country.id)]
     url = URL.format(country.id)
     if not stadiums:
@@ -320,6 +333,7 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
     """Scrape stadiums data and dump it to a JSON file.
 
     Recognized optional arguments:
+        excluded: iterable of countries to be excluded from dump
         use_timestamp: whether to append a timestamp to the dumpfile's name (default: True)
         prefix: a prefix for a dumpfile's name
         filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
@@ -330,7 +344,10 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
         kwargs: optional arguments
     """
     now = datetime.now()
-    countries = countries or scrape_countries()
+    countries = list(countries or scrape_countries())
+    excluded = set(kwargs.get("excluded")) or set()
+    countries = [c for c in countries if c not in excluded]
+    _log.info(f"Scraping {len(countries)} country(ies) started...")
     data = {
         "timestamp": now.strftime(READABLE_TIMESTAMP_FORMAT),
         "countries": []
@@ -340,6 +357,9 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
             country_stadiums_data = scrape_country_stadiums(country)
             if country_stadiums_data:
                 data["countries"].append(country_stadiums_data.json)
+                # DEBUG
+                from pprint import pprint
+                pprint(DetailsScraper.TEMP_FIELDS)
         except Exception as e:
             _log.error(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 

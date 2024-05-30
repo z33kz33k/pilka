@@ -11,7 +11,7 @@ import inspect
 import os
 import logging
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -29,12 +29,24 @@ from pilka.utils.check_type import type_checker
 _log = logging.getLogger(__name__)
 
 
+class ParsingError(ValueError):
+    """Raised whenever parser's assumptions are not met.
+    """
+
+
+def seconds2readable(seconds: float) -> str:
+    seconds = round(seconds)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours}h:{minutes:02}m:{seconds:02}s"
+
+
 def timed(operation="", precision=3) -> Callable:
     """Add time measurement to the decorated operation.
 
     Args:
         operation: name of the time-measured operation (default is function's name)
-        precision: precision of the time measurement in seconds
+        precision: precision of the time measurement in seconds (decides output text formatting)
 
     Returns:
         the decorated function
@@ -48,8 +60,15 @@ def timed(operation="", precision=3) -> Callable:
             with Timer() as t:
                 result = func(*args, **kwargs)
             activity = operation or f"'{func.__name__}()'"
-            _log.info(f"Completed {activity} in {t.elapsed:.{precision}f} "
-                      f"seconds")
+            time = seconds2readable(t.elapsed)
+            if not precision:
+                _log.info(f"Completed {activity} in {time}")
+            elif precision == 1:
+                _log.info(f"Completed {activity} in {t.elapsed:.{precision}f} "
+                          f"second(s) ({time})")
+            else:
+                _log.info(f"Completed {activity} in {t.elapsed:.{precision}f} "
+                          f"second(s)")
             return result
         return wrapper
     return decorator
@@ -66,7 +85,9 @@ def first_df_row_as_columns(df: pd.DataFrame) -> pd.DataFrame:
 def extract_float(text: str) -> float:
     """Extract floating point number from text.
     """
-    text = "".join([char for char in text if char.isdigit() or char in ",."])
+    num = "".join([char for char in text if char.isdigit() or char in ",."])
+    if not num:
+        raise ParsingError(f"No digits or decimal point in text: {text!r}")
     return float(text.replace(",", "."))
 
 
@@ -74,8 +95,10 @@ def extract_float(text: str) -> float:
 def extract_int(text: str) -> int:
     """Extract an integer text.
     """
-    text = "".join([char for char in text if char.isdigit()])
-    return int(text)
+    num = "".join([char for char in text if char.isdigit()])
+    if not num:
+        raise ParsingError(f"No digits in text: {text!r}")
+    return int(num)
 
 
 def from_iterable(iterable: Iterable[T], predicate: Callable[[T], bool]) -> Optional[T]:
@@ -219,5 +242,3 @@ def cleardir(obj: object) -> list[str]:
     """Return ``dir(obj)`` without extraneous fluff.
     """
     return [attr for attr in dir(obj) if not attr.startswith("_")]
-
-
