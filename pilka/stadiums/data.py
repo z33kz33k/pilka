@@ -11,8 +11,8 @@ from dataclasses import Field, asdict, dataclass, fields
 from datetime import datetime
 from typing import Type
 
-from pilka.stadiums.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
-from pilka.stadiums.utils import get_classes_in_module, get_properties, tolist, totuple
+from pilka.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
+from pilka.utils import get_classes_in_module, get_properties, tolist, totuple
 
 
 def _serialize(data: Json) -> Json:  # recursive
@@ -156,7 +156,7 @@ class League(_JsonSerializable):
 
 
 @dataclass(frozen=True)
-class _BasicStadium(_JsonSerializable):
+class BasicStadium(_JsonSerializable):
     name: str
     url: str
     town: str | Town
@@ -179,7 +179,7 @@ class Cost(_JsonSerializable):
 
 
 @dataclass(frozen=True)
-class Stadium(_BasicStadium):
+class Stadium(BasicStadium):
     country: str
     address: str | None
     inauguration: datetime | None

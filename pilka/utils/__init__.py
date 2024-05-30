@@ -22,8 +22,8 @@ import pandas as pd
 from contexttimer import Timer
 from langcodes import Language, tag_is_valid
 
-from pilka.stadiums.constants import PathLike, T, SECONDS_IN_YEAR
-from pilka.stadiums.utils.check_type import type_checker
+from pilka.constants import PathLike, T, SECONDS_IN_YEAR
+from pilka.utils.check_type import type_checker
 
 
 _log = logging.getLogger(__name__)
@@ -219,3 +219,5 @@ def cleardir(obj: object) -> list[str]:
     """Return ``dir(obj)`` without extraneous fluff.
     """
     return [attr for attr in dir(obj) if not attr.startswith("_")]
+
+

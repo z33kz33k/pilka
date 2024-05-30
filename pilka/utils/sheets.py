@@ -12,8 +12,8 @@ from typing import List
 
 import gspread
 
-from pilka.stadiums.utils import timed
-from pilka.stadiums.utils.check_type import generic_iterable_type_checker, type_checker
+from pilka.utils import timed
+from pilka.utils.check_type import generic_iterable_type_checker, type_checker
 
 _log = logging.getLogger(__name__)
 

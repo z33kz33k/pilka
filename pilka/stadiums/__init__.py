@@ -20,19 +20,14 @@ from typing import Any, Iterable, Iterator
 
 from bs4 import Tag
 
-from pilka.stadiums.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, \
+from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
-from pilka.stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, _BasicStadium
-from pilka.stadiums.utils import extract_int, from_iterable, getdir, init_log, timed
-from pilka.stadiums.utils.scrape import getsoup, http_requests_counted, throttled
+from pilka.stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, \
+    BasicStadium
+from pilka.utils import extract_int, getdir, timed
+from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 
-init_log()
 _log = logging.getLogger(__name__)
-
-
-class ScrapingError(IOError):
-    """Raised when scraping produces unexpected results.
-    """
 
 
 def scrape_polish_towns() -> list[Town]:
@@ -62,7 +57,7 @@ URL = "http://stadiumdb.com/stadiums/{}"
 URL_PL = "http://stadiony.net/stadiony/{}"
 
 
-def scrape_basic_data(country_id="pol") -> Iterator[_BasicStadium]:
+def scrape_basic_data(country_id="pol") -> Iterator[BasicStadium]:
     is_pl = country_id == "pol"
     url = URL_PL if is_pl else URL
     towns = {t.name: t for t in scrape_polish_towns()} if is_pl else None
@@ -80,7 +75,7 @@ def scrape_basic_data(country_id="pol") -> Iterator[_BasicStadium]:
             clubs = [club.strip() for club in clubs_tag.text.split(", ") if club.strip() != "-"]
             cap = extract_int(cap_tag.text)
             league = League(leagues[idx], idx if has_national else idx + 1)
-            yield _BasicStadium(name, url, town, tuple(clubs), cap, league)
+            yield BasicStadium(name, url, town, tuple(clubs), cap, league)
 
 
 def throttling_delay() -> float:
@@ -102,7 +97,7 @@ class DetailsScraper:
         "illumination": "Floodlights",
     }
 
-    def __init__(self, basic_data: _BasicStadium) -> None:
+    def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
         self._soup = getsoup(self._basic_data.url)
 
@@ -273,7 +268,7 @@ class DetailsScraperPl(DetailsScraper):
         "illumination": "Oświetlenie",
     }
 
-    def __init__(self, basic_data: _BasicStadium) -> None:
+    def __init__(self, basic_data: BasicStadium) -> None:
         if "stadiony.net" not in basic_data.url:
             raise ValueError(f"Invalid URL for a Polish scraper: {basic_data.url!r}")
         super().__init__(basic_data)

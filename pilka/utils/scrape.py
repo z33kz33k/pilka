@@ -16,8 +16,9 @@ import requests
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 
-from pilka.stadiums.constants import REQUEST_TIMEOUT
-from pilka.stadiums.utils import timed, type_checker
+from pilka.constants import REQUEST_TIMEOUT
+from pilka.utils import timed
+from pilka.utils.check_type import type_checker
 
 
 _log = logging.getLogger(__name__)
@@ -25,6 +26,11 @@ _log = logging.getLogger(__name__)
 
 class ParsingError(ValueError):
     """Raised whenever parser's assumptions are not met.
+    """
+
+
+class ScrapingError(IOError):
+    """Raised whenever scraping produces unexpected results.
     """
 
 
