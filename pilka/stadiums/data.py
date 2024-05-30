@@ -49,25 +49,25 @@ def _deserialize_substructs(data: Json) -> dict:
     return data
 
 
+def _deserialize_datetime(data: Json, field: Field) -> Json:
+    try:
+        if datetime.__name__ in str(field.type):
+            data[field.name] = datetime.strptime(data[field.name], CONCISE_TIMESTAMP_FORMAT)
+        elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
+            data[field.name] = [
+                datetime.strptime(item, CONCISE_TIMESTAMP_FORMAT)
+                for item in data[field.name]]
+    except ValueError:
+        pass
+    return data
+
+
 @dataclass(frozen=True)
 class _JsonSerializable:
     @property
     def json(self) -> Json:
         data = {k: v for k, v in asdict(self).items() if v is not None}
         return _serialize(data)
-
-    @classmethod
-    def _deserialize_datetime(cls, data: Json, field: Field) -> Json:
-        try:
-            if datetime.__name__ in str(field.type):
-                data[field.name] = datetime.strptime(data[field.name], CONCISE_TIMESTAMP_FORMAT)
-            elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
-                data[field.name] = [
-                    datetime.strptime(item, CONCISE_TIMESTAMP_FORMAT)
-                    for item in data[field.name]]
-        except ValueError:
-            pass
-        return data
 
     @classmethod
     def from_json(cls, data: Json) -> "_JsonSerializable":
@@ -77,7 +77,7 @@ class _JsonSerializable:
             if data.get(f.name) is None:
                 data[f.name] = None
             else:
-                data = cls._deserialize_datetime(data, f)
+                data = _deserialize_datetime(data, f)
         data = _deserialize_substructs(data)
         for f in fields(cls):
             if isinstance(data.get(f.name), list):
@@ -214,3 +214,32 @@ class CountryStadiumsData(_JsonSerializable):
     country: Country
     url: str
     stadiums: tuple[Stadium, ...]
+
+    @property
+    def avg_capacity(self) -> float:
+        total = sum(s.capacity for s in self.stadiums)
+        return total / len(self.stadiums)
+
+    @property
+    def avg_capacity_tier1(self) -> float | None:
+        stadiums = [s for s in self.stadiums if s.league.tier == 1]
+        if not stadiums:
+            return None
+        total = sum(s.capacity for s in stadiums)
+        return total / len(stadiums)
+
+    @property
+    def avg_capacity_tier2(self) -> float | None:
+        stadiums = [s for s in self.stadiums if s.league.tier == 2]
+        if not stadiums:
+            return None
+        total = sum(s.capacity for s in stadiums)
+        return total / len(stadiums)
+
+    @property
+    def avg_capacity_tier3(self) -> float | None:
+        stadiums = [s for s in self.stadiums if s.league.tier == 3]
+        if not stadiums:
+            return None
+        total = sum(s.capacity for s in stadiums)
+        return total / len(stadiums)

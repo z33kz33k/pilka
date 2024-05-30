@@ -345,7 +345,8 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
     """
     now = datetime.now()
     countries = list(countries or scrape_countries())
-    excluded = set(kwargs.get("excluded")) or set()
+    excluded = kwargs.get("excluded")
+    excluded = set(excluded) if excluded else set()
     countries = [c for c in countries if c not in excluded]
     _log.info(f"Scraping {len(countries)} country(ies) started...")
     data = {
