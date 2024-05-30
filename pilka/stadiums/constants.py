@@ -1,7 +1,7 @@
 """
 
-    stadiums.constants.py
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.constants.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Script's constants
 
     @author: z33k

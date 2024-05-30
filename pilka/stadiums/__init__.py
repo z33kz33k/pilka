@@ -1,7 +1,7 @@
 """
 
-    stadiums.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
     Scrape stadiums data from stadiony.net/stadiumdb.com page.
 
     @author: z33k
@@ -20,11 +20,11 @@ from typing import Any, Iterable, Iterator
 
 from bs4 import Tag
 
-from stadiums.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, \
+from pilka.stadiums.constants import FILENAME_TIMESTAMP_FORMAT, Json, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
-from stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, _BasicStadium
-from stadiums.utils import extract_int, from_iterable, getdir, init_log, timed
-from stadiums.utils.scrape import getsoup, http_requests_counted, throttled
+from pilka.stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, _BasicStadium
+from pilka.stadiums.utils import extract_int, from_iterable, getdir, init_log, timed
+from pilka.stadiums.utils.scrape import getsoup, http_requests_counted, throttled
 
 init_log()
 _log = logging.getLogger(__name__)

@@ -1,7 +1,7 @@
 """
 
-    stadiums.data.py
-    ~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.data.py
+    ~~~~~~~~~~~~~~~~~~~~~~~
     Data structures.
 
     @author: z33k
@@ -11,8 +11,8 @@ from dataclasses import Field, asdict, dataclass, fields
 from datetime import datetime
 from typing import Type
 
-from stadiums.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
-from stadiums.utils import get_classes_in_module, get_properties, tolist, totuple
+from pilka.stadiums.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
+from pilka.stadiums.utils import get_classes_in_module, get_properties, tolist, totuple
 
 
 def _serialize(data: Json) -> Json:  # recursive

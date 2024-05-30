@@ -1,6 +1,6 @@
 """
 
-    stadiums.utils.scrape.py
+    pilka.stadiums.utils.scrape.py
     ~~~~~~~~~~~~~~~~~~~~~~~~~
     Utilities for scraping.
 
@@ -16,8 +16,8 @@ import requests
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 
-from stadiums.constants import REQUEST_TIMEOUT
-from stadiums.utils import timed, type_checker
+from pilka.stadiums.constants import REQUEST_TIMEOUT
+from pilka.stadiums.utils import timed, type_checker
 
 
 _log = logging.getLogger(__name__)

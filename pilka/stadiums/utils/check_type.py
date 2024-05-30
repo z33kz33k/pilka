@@ -1,6 +1,6 @@
 """
 
-    stadiums.utils.check_type.py
+    pilka.stadiums.utils.check_type.py
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Type checking decorators.
@@ -14,7 +14,7 @@
 from functools import wraps
 from typing import Any, Iterable, Type
 
-from stadiums.constants import Method, Function
+from pilka.stadiums.constants import Method, Function
 
 
 def fullqualname(class_: Type) -> str:

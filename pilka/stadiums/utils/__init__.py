@@ -1,7 +1,7 @@
 """
 
-    stadiums.utils.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.utils.__init__.py
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Project's utilities.
 
     @author: z33k
@@ -22,8 +22,8 @@ import pandas as pd
 from contexttimer import Timer
 from langcodes import Language, tag_is_valid
 
-from stadiums.constants import PathLike, T, SECONDS_IN_YEAR
-from stadiums.utils.check_type import type_checker
+from pilka.stadiums.constants import PathLike, T, SECONDS_IN_YEAR
+from pilka.stadiums.utils.check_type import type_checker
 
 
 _log = logging.getLogger(__name__)
@@ -158,9 +158,9 @@ def init_log() -> None:
     if not _logging_initialized:
         output_dir = Path(os.getcwd()) / "temp" / "logs"
         if output_dir.exists():
-            logfile = output_dir / "stadiums.log"
+            logfile = output_dir / "pilka.log"
         else:
-            logfile = "stadiums.log"
+            logfile = "pilka.log"
 
         log_format = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
         log_level = logging.INFO
