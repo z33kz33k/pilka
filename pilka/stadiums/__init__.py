@@ -149,8 +149,8 @@ class DetailsScraper:
         return None
 
     @staticmethod
-    def _parse_cost(row: Tag) -> Cost | None:
-        return _CostSubParser(row).parse()
+    def _parse_cost(text: str) -> Cost | None:
+        return _CostSubParser(text).parse()
 
     def _parse_description(self) -> str | None:
         article = self._soup.find("article", class_="stadium-description")
@@ -254,7 +254,7 @@ class _CostSubParser:
         return int(base_amount * 1_000_000_000)
 
     @staticmethod
-    def _split_currency_and_amount_str(text: str) -> tuple:
+    def _split_merged(text: str) -> tuple:
         match = re.search(r"\d", text)
         if not match:
             return ()
@@ -263,7 +263,7 @@ class _CostSubParser:
     def _handle_single_token(self) -> Cost | None:
         _, qualifier = self._identify_qualifier(self._text)
         text = self._text[:-len(qualifier)] if qualifier else self._text
-        result = self._split_currency_and_amount_str(text)
+        result = self._split_merged(text)
         if not result:
             return None
         currency, amount_str = result
@@ -287,6 +287,14 @@ class _CostSubParser:
         except ValueError:
             return None
 
+    def _handle_two_tokens_one_merged(self, qualifier_idx: int, qualifier: str) -> Cost | None:
+        merged = self._tokens[0] if qualifier_idx == 1 else self._tokens[1]
+        result = self._split_merged(merged)
+        if not result:
+            return None
+        currency, amount_str = result
+        return Cost(self._get_qualified_amount(amount_str, qualifier), currency)
+
     def _handle_two_tokens(self) -> Cost | None:
         idx, found = self._identify_qualifier(*self._tokens)
         if idx == -1:
@@ -294,12 +302,7 @@ class _CostSubParser:
 
         # qualifier is a token so the other is a merged currency-amount
         if found in self._tokens:
-            merged = self._tokens[0] if idx == 1 else self._tokens[1]
-            result = self._split_currency_and_amount_str(merged)
-            if not result:
-                return None
-            currency, amount_str = result
-            return Cost(self._get_qualified_amount(amount_str, found), currency)
+            return self._handle_two_tokens_one_merged(idx, found)
 
         if idx == 0:
             amount_str, currency = self._tokens
@@ -337,20 +340,25 @@ class _CostSubParser:
                         pass
         return compound
 
+    def _handle_three_tokens(self):
+        idx, found = self._identify_qualifier(*self._tokens, strict=True)
+        if idx == 1:
+            amount_str, _, currency = self._tokens
+        elif idx == 2:
+            currency, amount_str, _ = self._tokens
+        else:
+            return None
+        return Cost(self._get_qualified_amount(amount_str, found), currency)
+
     def parse(self) -> Cost | None:
         if any(sep in self._text for sep in self.COMPOUND_SEPS):
             return self._handle_compound_cost()
-        if len(self._tokens) == 2:
+        if len(self._tokens) == 1:
+            return self._handle_single_token()
+        elif len(self._tokens) == 2:
             return self._handle_two_tokens()
         elif len(self._tokens) == 3:
-            idx, found = self._identify_qualifier(*self._tokens, strict=True)
-            if idx == 1:
-                amount_str, _, currency = self._tokens
-            elif idx == 2:
-                currency, amount_str, _ = self._tokens
-            else:
-                return None
-            return Cost(self._get_qualified_amount(amount_str, found), currency)
+            return self._handle_three_tokens()
         elif len(self._tokens) > 3 and all(ch.isalpha() for ch in self._tokens[-1]):
             return self._handle_space_delimited_amount()
 
@@ -380,8 +388,8 @@ class DetailsScraperPl(DetailsScraper):
         super().__init__(basic_data)
 
     @staticmethod
-    def _parse_cost(row: Tag) -> Cost | None:  # override
-        return _CostSubParserPl(row).parse()
+    def _parse_cost(text: str) -> Cost | None:  # override
+        return _CostSubParserPl(text).parse()
 
 
 def scrape_stadiums(country_id="pol") -> Iterator[Stadium]:
