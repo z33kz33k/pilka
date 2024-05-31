@@ -11,7 +11,7 @@ import inspect
 import os
 import logging
 import sys
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -93,12 +93,68 @@ def extract_float(text: str) -> float:
 
 @type_checker(str)
 def extract_int(text: str) -> int:
-    """Extract an integer text.
+    """Extract an integer from text.
     """
     num = "".join([char for char in text if char.isdigit()])
     if not num:
         raise ParsingError(f"No digits in text: {text!r}")
     return int(num)
+
+
+@type_checker(str)
+def extract_date(text: str, month_in_the_middle=True) -> date:
+    """Extract a date object from text.
+    """
+    sep, stack = None, ["/", ".", "-"]
+    while stack:
+        token = stack.pop()
+        if token in text:
+            sep = token
+            break
+
+    if not sep:
+        raise ParsingError(f"Not a date text: {text!r}")
+
+    datestr = "".join([char for char in text if char.isdigit() or char == sep])
+    if not datestr:
+        raise ParsingError(f"Not a date text: {text!r}")
+
+    tokens = datestr.split(sep)
+
+    if len(tokens) == 3:
+        first, second, third = tokens
+        if len(first) == 4:
+            year, month, day = first, second, third
+        elif len(third) == 4:
+            year, month, day = third, second, first
+        else:
+            raise ParsingError(f"Not a date text: {text!r}")
+
+        if not month_in_the_middle:
+            month, day = day, month
+
+    elif len(tokens) == 2:
+        day = 1
+        first, second = tokens
+        if len(first) == 4:
+            year, month = first, second
+        elif len(second) == 4:
+            year, month = second, first
+        else:
+            raise ParsingError(f"Not a date text: {text!r}")
+
+    elif len(tokens) == 1:
+        year, month, day = tokens[0], 1, 1
+
+    else:
+        raise ParsingError(f"Not a date text: {text!r}")
+
+    try:
+        year, month, day = int(year), int(month), int(day)
+    except ValueError:
+        raise ParsingError(f"Not a date text: {text!r}")
+
+    return date(year, month, day)
 
 
 def from_iterable(iterable: Iterable[T], predicate: Callable[[T], bool]) -> Optional[T]:

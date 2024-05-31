@@ -14,7 +14,7 @@ import re
 import traceback
 from collections import defaultdict
 from dataclasses import asdict
-from datetime import datetime
+from datetime import date, datetime
 from operator import itemgetter
 from typing import Any, Iterable, Iterator
 
@@ -22,9 +22,9 @@ from bs4 import Tag
 
 from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
-from pilka.stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, \
+from pilka.stadiums.data import Cost, Country, CountryStadiumsData, Duration, League, Stadium, Town, \
     BasicStadium
-from pilka.utils import ParsingError, extract_float, extract_int, getdir, timed
+from pilka.utils import ParsingError, extract_date, extract_float, extract_int, getdir, timed
 from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 
 _log = logging.getLogger(__name__)
@@ -88,65 +88,82 @@ def throttling_delay() -> float:
 
 # TODO: parse more fields
 class DetailsScraper:
-    DOT_DATE_REGEX = re.compile(r"\b(?:\d{2}\.\d{2}\.\d{4}|\d{2}\.\d{4}|\d{4})(?:\s*\w+)*\b")
-    SLASH_DATE_REGEX = re.compile(r"\b(?:\d{2}\/\d{2}\/\d{4}|\d{2}\/\d{4}|\d{4})(?:\s*\w+)*\b")
-    DMY_DT_FMT = "%d.%m.%Y"
-    MY_DT_FMT = "%m.%Y"
     ROWS = {
-        "country": "Country",
-        "address": "Address",
-        "inauguration": "Inauguration",
-        "renovation": "Renovations",
-        "cost": "Cost",
-        "illumination": "Floodlights",
+        "country": {"Country"},
+        "address": {"Address", "Addres", "Adfress"},
+        "inauguration": {
+            "Inauguration", "Ianuguration", "Iauguration", "Inauguaration", "Inauguartion",
+            "Inauguation", "Inauguracja", "Inauguration (club establishment)", "Inaugurtion",
+            "Inuguration", "First match", "First event", "First game", "Opening game"
+        },
+        "renovations": {"Renovations", "Renovation", "Renovatons"},
+        "cost": {"Cost", "cost", "Koszt", "Kost", "Renovation Cost", "Renovation cost"},
+        "illumination": {"Floodlights"},
     }
-    # DEBUG
-    AGGREGATED_FIELDS: defaultdict[str, list[str]] = defaultdict(list)
 
     def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
         self._soup = getsoup(self._basic_data.url)
 
+    @staticmethod
+    def _split_parenthesized(text: str) -> tuple[str, str]:
+        first, second = text.split("(")
+        second = second[:-1] if second.endswith(")") else second
+        return first.strip(), second.strip()
+
     @classmethod
-    def _parse_inauguration(cls, row: Tag) -> datetime | None:
-        text = row.find("td").text.strip()
-        if "/" in text:
-            date = cls.SLASH_DATE_REGEX.search(text)
-        else:
-            date = cls.DOT_DATE_REGEX.search(text)
-        if date:
-            date = date.group()
-            if len(date) == 10:
-                fmt = cls.DMY_DT_FMT.replace(".", "/") if "/" in date else cls.DMY_DT_FMT
-                return datetime.strptime(date, fmt)
-            elif len(date) == 7:
-                fmt = cls.MY_DT_FMT.replace(".", "/") if "/" in date else cls.MY_DT_FMT
-                return datetime.strptime(date, fmt)
-            else:
-                return datetime(int(date), 1, 1)
-        return None
+    def _parse_inauguration(cls, row: Tag) -> tuple[date, str | None] | None:
+        text, details = row.find("td").text.strip(), None
+        if "(" in text:
+            text, details = cls._split_parenthesized(text)
+        try:
+            return extract_date(text), details
+        except ParsingError:
+            return None
 
     @staticmethod
-    def _parse_renovation(row: Tag) -> datetime | None:
-        years = []
+    def _parse_duration(text: str, sep="-") -> Duration | None:
+        try:
+            first, second = text.split(sep)
+        except ValueError:
+            return None
+        first, second = first.strip(), second.strip()
+        if len(first) == 4 and len(second) in (2, 4):
+            if len(second) == 2:
+                second = first[:2] + second
+            try:
+                start, end = int(first), int(second)
+            except ValueError:
+                return None
+            return Duration(date(start, 1, 1), date(end, 1, 1))
+        try:
+            return Duration(extract_date(first), extract_date(second))
+        except ParsingError:
+            return None
+
+    @classmethod
+    def _parse_renovations(cls, row: Tag) -> tuple[datetime | Duration, ...] | None:
         text = row.find("td").text.strip()
         pattern = r"\(.*?\)"
         cleaned_text = re.sub(pattern, "", text)  # get rid of anything within parentheses
+        renovations = []
         for token in cleaned_text.split(","):
             token = token.strip()
             if "-" in token:
-                years.extend(token.split("-"))
+                duration = cls._parse_duration(token)
+                if duration:
+                    renovations.append(duration)
             elif "–" in token:
-                years.extend(token.split("–"))
+                duration = cls._parse_duration(token, sep="–")
+                if duration:
+                    renovations.append(duration)
             else:
-                years.append(token)
-        if years:
-            try:
-                renovation = max(int(year) for year in years)
-            except ValueError:  # very rare cases where a year is actually a month and a year
-                return None
-            return datetime(renovation, 1, 1)
-        return None
+                try:
+                    renovations.append(extract_date(token))
+                except ParsingError:
+                    pass
+
+        return renovations or None
 
     @staticmethod
     def _parse_cost(text: str) -> Cost | None:
@@ -170,27 +187,31 @@ class DetailsScraper:
             raise ScrapingError(
                 f"Page at {self._basic_data.url} contains no 'table' tag of class 'stadium-info'")
         country, address = None, None
-        inauguration, renovation, cost, illumination = None, None, None, None
+        inauguration, inauguration_details, renovations = None, None, None
+        cost, illumination = None, None
+
         for row in table.find_all("tr"):
             header = row.find("th").text.strip()
-            # DEBUG
-            if header:
-                self.AGGREGATED_FIELDS[header].append(self._basic_data.url)
-
-            if header == self.ROWS["country"]:
+            if header in self.ROWS["country"]:
                 country = row.find("td").find("a").text.strip().strip('"')
-            elif header == self.ROWS["address"]:
+            elif header in self.ROWS["address"]:
                 address = row.find("td").text.strip()
-            elif header == self.ROWS["inauguration"]:
+            elif header in self.ROWS["inauguration"]:
                 inauguration = self._parse_inauguration(row)
-            elif header == self.ROWS["renovation"]:
-                renovation = self._parse_renovation(row)
-            elif header == self.ROWS["cost"]:
+                if inauguration:
+                    inauguration, inauguration_details = inauguration
+                else:
+                    _log.warning(f"Unable to parse inauguration from: {self._basic_data.url!r}")
+            elif header in self.ROWS["renovation"]:
+                renovations = self._parse_renovations(row)
+                if not renovations:
+                    _log.warning(f"Unable to parse renovations from: {self._basic_data.url!r}")
+            elif header in self.ROWS["cost"]:
                 text = row.find("td").text.strip()
                 cost = self._parse_cost(text)
                 if not cost:
                     _log.warning(f"Unable to parse cost from: {self._basic_data.url!r}")
-            elif header == self.ROWS["illumination"]:
+            elif header in self.ROWS["illumination"]:
                 text = row.find("td").text.strip()
                 try:
                     illumination = extract_int(text)
@@ -202,7 +223,8 @@ class DetailsScraper:
             country=country,
             address=address,
             inauguration=inauguration,
-            renovation=renovation,
+            inauguration_details=inauguration_details,
+            renovations=renovations,
             cost=cost,
             illumination_lux=illumination,
             description=self._parse_description()
@@ -224,8 +246,8 @@ class _CostSubParser:
         if "(" in text:
             text, *_ = text.split("(")
             text = text.strip()
-        if " + " in text:
-            text, *_ = text.split(" + ")
+        if " / " in text:
+            *_, text = text.split(" / ")
             text = text.strip()
         for approx in cls.APPROXIMATORS:
             if text.startswith(approx):
@@ -374,12 +396,12 @@ class _CostSubParserPl(_CostSubParser):
 
 class DetailsScraperPl(DetailsScraper):
     ROWS = {
-        "country": "Kraj",
-        "address": "Adres",
-        "inauguration": "Inauguracja",
-        "renovation": "Renowacje",
-        "cost": "Koszt",
-        "illumination": "Oświetlenie",
+        "country": {"Kraj"},
+        "address": {"Adres"},
+        "inauguration": {"Inauguracja"},
+        "renovation": {"Renowacje"},
+        "cost": {"Koszt"},
+        "illumination": {"Oświetlenie"},
     }
 
     def __init__(self, basic_data: BasicStadium) -> None:

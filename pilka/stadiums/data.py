@@ -8,10 +8,10 @@
 
 """
 from dataclasses import Field, asdict, dataclass, fields
-from datetime import datetime
+from datetime import date, timedelta
 from typing import Type
 
-from pilka.constants import Json, CONCISE_TIMESTAMP_FORMAT, T
+from pilka.constants import Json, T
 from pilka.utils import get_classes_in_module, get_properties, tolist, totuple
 
 
@@ -25,8 +25,8 @@ def _serialize(data: Json) -> Json:  # recursive
         data = {k: v for k, v in data.items() if v is not None}
         for k, v in data.items():
             data[k] = _serialize(v)
-    elif isinstance(data, datetime):
-        data = data.strftime(CONCISE_TIMESTAMP_FORMAT)
+    elif isinstance(data, date):
+        data = data.isoformat()
     return data
 
 
@@ -49,14 +49,12 @@ def _deserialize_substructs(data: Json) -> dict:
     return data
 
 
-def _deserialize_datetime(data: Json, field: Field) -> Json:
+def _deserialize_dates(data: Json, field: Field) -> Json:
     try:
-        if datetime.__name__ in str(field.type):
-            data[field.name] = datetime.strptime(data[field.name], CONCISE_TIMESTAMP_FORMAT)
+        if date.__name__ in str(field.type):
+            data[field.name] = date.fromisoformat(data[field.name])
         elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
-            data[field.name] = [
-                datetime.strptime(item, CONCISE_TIMESTAMP_FORMAT)
-                for item in data[field.name]]
+            data[field.name] = [date.fromisoformat(item) for item in data[field.name]]
     except ValueError:
         pass
     return data
@@ -77,7 +75,7 @@ class _JsonSerializable:
             if data.get(f.name) is None:
                 data[f.name] = None
             else:
-                data = _deserialize_datetime(data, f)
+                data = _deserialize_dates(data, f)
         data = _deserialize_substructs(data)
         for f in fields(cls):
             if isinstance(data.get(f.name), list):
@@ -169,7 +167,7 @@ class BasicStadium(_JsonSerializable):
         return get_tier(self.capacity)
 
 
-_KORONA_INAUGURATION = datetime(2006, 4, 1, 0, 0)
+_KORONA_INAUGURATION = date(2006, 4, 1)
 
 
 @dataclass(frozen=True)
@@ -186,22 +184,36 @@ class Cost(_JsonSerializable):
 
 
 @dataclass(frozen=True)
+class Duration(_JsonSerializable):
+    start: date
+    end: date
+
+    @property
+    def delta(self) -> timedelta:
+        return self.end - self.start
+
+
+@dataclass(frozen=True)
 class Stadium(BasicStadium):
     country: str
     address: str | None
-    inauguration: datetime | None
-    renovation: datetime | None  # TODO: rename to renovations and parse all of them
+    inauguration: date | None
+    inauguration_details: str | None
+    renovations: tuple[date | Duration, ...] | None
     cost: Cost | None
     illumination_lux: int | None
     description: str | None
 
     @property
     def is_modern(self) -> bool:
-        dates = [d for d in (self.inauguration, self.renovation) if d is not None]
+        last_renovation = self.renovations[-1] if self.renovations else None
+        if isinstance(last_renovation, Duration):
+            last_renovation = last_renovation.end
+        dates = [d for d in (self.inauguration, last_renovation) if d is not None]
         if not dates:
             return False
-        date = max(dates)
-        return date >= _KORONA_INAUGURATION
+        result = max(dates)
+        return result >= _KORONA_INAUGURATION
 
 
 @dataclass(frozen=True)
