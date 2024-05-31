@@ -16,16 +16,17 @@ from collections import defaultdict
 from dataclasses import asdict
 from datetime import date, datetime
 from operator import itemgetter
-from typing import Any, Iterable, Iterator
+from typing import Any, Callable, Iterable, Iterator
 
 from bs4 import Tag
 
 from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
 from pilka.stadiums.data import Cost, Country, CountryStadiumsData, Duration, League, Stadium, Town, \
-    BasicStadium
+    BasicStadium, POLAND
 from pilka.utils import ParsingError, extract_date, extract_float, extract_int, getdir, timed
 from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
+from pilka.constants import T
 
 _log = logging.getLogger(__name__)
 
@@ -57,12 +58,12 @@ URL = "http://stadiumdb.com/stadiums/{}"
 URL_PL = "http://stadiony.net/stadiony/{}"
 
 
-def scrape_basic_data(country_id="pol") -> list[BasicStadium]:
+def scrape_basic_data(country=POLAND) -> list[BasicStadium]:
     basic_stadiums = []
-    is_pl = country_id == "pol"
+    is_pl = country == POLAND
     url = URL_PL if is_pl else URL
     towns = {t.name: t for t in scrape_polish_towns()} if is_pl else None
-    soup = getsoup(url.format(country_id))
+    soup = getsoup(url.format(country.id))
     leagues = [h2.text.strip() for h2 in soup.find_all("h2")]
     has_national = leagues[0] in ("National Stadium", "Stadion Narodowy")
     for idx, table in enumerate(soup.find_all("table")):
@@ -77,7 +78,8 @@ def scrape_basic_data(country_id="pol") -> list[BasicStadium]:
             cap = extract_int(cap_tag.text)
             league = League(leagues[idx], idx if has_national else idx + 1)
             league = League(league.name) if league.name == "Other" else league
-            basic_stadiums.append(BasicStadium(name, url, town, tuple(clubs), cap, league))
+            basic_stadiums.append(
+                BasicStadium(name, url, country.name, town, tuple(clubs), cap, league))
 
     return basic_stadiums
 
@@ -89,8 +91,10 @@ def throttling_delay() -> float:
 # TODO: parse more fields
 class DetailsScraper:
     ROWS = {
-        "country": {"Country"},
         "address": {"Address", "Addres", "Adfress"},
+        "construction": {
+            "Construction", "Concstruction", "Construction time", "Costruction", "Czas budowy"
+        },
         "inauguration": {
             "Inauguration", "Ianuguration", "Iauguration", "Inauguaration", "Inauguartion",
             "Inauguation", "Inauguracja", "Inauguration (club establishment)", "Inaugurtion",
@@ -99,11 +103,19 @@ class DetailsScraper:
         "renovations": {"Renovations", "Renovation", "Renovatons"},
         "cost": {"Cost", "cost", "Koszt", "Kost", "Renovation Cost", "Renovation cost"},
         "illumination": {"Floodlights"},
+        "record_attendance": {
+            "Record attendance", "Record Attendance", "Recod attendance",
+            "Record attendance (MLS)", "Record attendance (football)", "Record attendence",
+            "Record attnedance", "Record audience", "Rekord frekwencji", "Rercord attendance",
+            "Attendance record"
+        }
     }
+    DURATION_SEPARATORS = "-", "–"
 
     def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
         self._soup = getsoup(self._basic_data.url)
+        self._text = None
 
     @staticmethod
     def _split_parenthesized(text: str) -> tuple[str, str]:
@@ -111,18 +123,28 @@ class DetailsScraper:
         second = second[:-1] if second.endswith(")") else second
         return first.strip(), second.strip()
 
-    @classmethod
-    def _parse_inauguration(cls, row: Tag) -> tuple[date, str | None] | None:
-        text, details = row.find("td").text.strip(), None
-        if "(" in text:
-            text, details = cls._split_parenthesized(text)
+    def _parse_text_with_details(
+            self, extract_func: Callable[[str], T] = extract_date) -> tuple[T, str | None] | None:
+        details = None
+        text = self._text
+        if "(" in self._text:
+            text, details = self._split_parenthesized(text)
         try:
-            return extract_date(text), details
+            return extract_func(text), details
         except ParsingError:
             return None
 
-    @staticmethod
-    def _parse_duration(text: str, sep="-") -> Duration | None:
+    @classmethod
+    def _parse_duration(cls, text: str) -> date | Duration | None:
+        if cls.DURATION_SEPARATORS[0] in text:
+            sep = cls.DURATION_SEPARATORS[0]
+        elif cls.DURATION_SEPARATORS[1] in text:
+            sep = cls.DURATION_SEPARATORS[1]
+        else:
+            try:
+                return extract_date(text)
+            except ParsingError:
+                return None
         try:
             first, second = text.split(sep)
         except ValueError:
@@ -141,33 +163,19 @@ class DetailsScraper:
         except ParsingError:
             return None
 
-    @classmethod
-    def _parse_renovations(cls, row: Tag) -> tuple[datetime | Duration, ...] | None:
-        text = row.find("td").text.strip()
+    def _parse_renovations(self) -> tuple[datetime | Duration, ...] | None:
         pattern = r"\(.*?\)"
-        cleaned_text = re.sub(pattern, "", text)  # get rid of anything within parentheses
+        cleaned_text = re.sub(pattern, "", self._text)  # get rid of anything within parentheses
         renovations = []
         for token in cleaned_text.split(","):
             token = token.strip()
-            if "-" in token:
-                duration = cls._parse_duration(token)
-                if duration:
-                    renovations.append(duration)
-            elif "–" in token:
-                duration = cls._parse_duration(token, sep="–")
-                if duration:
-                    renovations.append(duration)
-            else:
-                try:
-                    renovations.append(extract_date(token))
-                except ParsingError:
-                    pass
-
+            duration = self._parse_duration(token)
+            if duration:
+                renovations.append(duration)
         return renovations or None
 
-    @staticmethod
-    def _parse_cost(text: str) -> Cost | None:
-        return _CostSubParser(text).parse()
+    def _parse_cost(self) -> Cost | None:
+        return _CostSubParser(self._text).parse()
 
     def _parse_description(self) -> str | None:
         article = self._soup.find("article", class_="stadium-description")
@@ -186,47 +194,56 @@ class DetailsScraper:
         if table is None:
             raise ScrapingError(
                 f"Page at {self._basic_data.url} contains no 'table' tag of class 'stadium-info'")
-        country, address = None, None
+        country, address, construction = None, None, None
         inauguration, inauguration_details, renovations = None, None, None
         cost, illumination = None, None
+        record_attendance, record_attendance_details = None, None
 
         for row in table.find_all("tr"):
             header = row.find("th").text.strip()
-            if header in self.ROWS["country"]:
-                country = row.find("td").find("a").text.strip().strip('"')
-            elif header in self.ROWS["address"]:
-                address = row.find("td").text.strip()
+            self._text = row.find("td").text.strip()
+            if header in self.ROWS["address"]:
+                address = self._text
+            elif header in self.ROWS["construction"]:
+                construction = self._parse_duration(self._text)
             elif header in self.ROWS["inauguration"]:
-                inauguration = self._parse_inauguration(row)
+                inauguration = self._parse_text_with_details()
                 if inauguration:
                     inauguration, inauguration_details = inauguration
                 else:
                     _log.warning(f"Unable to parse inauguration from: {self._basic_data.url!r}")
             elif header in self.ROWS["renovation"]:
-                renovations = self._parse_renovations(row)
+                renovations = self._parse_renovations()
                 if not renovations:
                     _log.warning(f"Unable to parse renovations from: {self._basic_data.url!r}")
             elif header in self.ROWS["cost"]:
-                text = row.find("td").text.strip()
-                cost = self._parse_cost(text)
+                cost = self._parse_cost()
                 if not cost:
                     _log.warning(f"Unable to parse cost from: {self._basic_data.url!r}")
             elif header in self.ROWS["illumination"]:
-                text = row.find("td").text.strip()
                 try:
-                    illumination = extract_int(text)
+                    illumination = extract_int(self._text)
                 except ParsingError:
                     pass
+            elif header in self.ROWS["record_attendance"]:
+                record_attendance = self._parse_text_with_details(extract_int)
+                if record_attendance:
+                    record_attendance, record_attendance_details = record_attendance
+                else:
+                    _log.warning(
+                        f"Unable to parse record attendance from: {self._basic_data.url!r}")
 
         return Stadium(
             **asdict(self._basic_data),
-            country=country,
             address=address,
+            construction=construction,
             inauguration=inauguration,
             inauguration_details=inauguration_details,
             renovations=renovations,
             cost=cost,
             illumination_lux=illumination,
+            record_attendance=record_attendance,
+            record_attendance_details=record_attendance_details,
             description=self._parse_description()
         )
 
@@ -235,7 +252,7 @@ class _CostSubParser:
     MILLION_QUALIFIERS = "million", "mln", "M", "m"
     BILLION_QUALIFIERS = "billion", "bln", "B", "b"
     APPROXIMATORS = "approx. ", "app. "
-    COMPOUND_SEPS = " + ", ", "
+    COMPOUND_SEPARATORS = " + ", ", "
 
     def __init__(self, text: str) -> None:
         self._text = self._prepare_text(text)
@@ -345,7 +362,7 @@ class _CostSubParser:
             return None
 
     def _handle_compound_cost(self) -> Cost | None:
-        add, comma = self.COMPOUND_SEPS
+        add, comma = self.COMPOUND_SEPARATORS
         sep = add if add in self._text else comma
         tokens = self._text.split(sep)
 
@@ -373,7 +390,7 @@ class _CostSubParser:
         return Cost(self._get_qualified_amount(amount_str, found), currency)
 
     def parse(self) -> Cost | None:
-        if any(sep in self._text for sep in self.COMPOUND_SEPS):
+        if any(sep in self._text for sep in self.COMPOUND_SEPARATORS):
             return self._handle_compound_cost()
         if len(self._tokens) == 1:
             return self._handle_single_token()
@@ -414,9 +431,9 @@ class DetailsScraperPl(DetailsScraper):
         return _CostSubParserPl(text).parse()
 
 
-def scrape_stadiums(country_id="pol") -> Iterator[Stadium]:
-    scraper = DetailsScraperPl if country_id == "pol" else DetailsScraper
-    basic_stadiums = scrape_basic_data(country_id=country_id)
+def scrape_stadiums(country=POLAND) -> Iterator[Stadium]:
+    scraper = DetailsScraperPl if country == POLAND else DetailsScraper
+    basic_stadiums = scrape_basic_data(country)
     _log.info(f"Only {len(basic_stadiums)} stadium(s) to go...")
     for stadium in basic_stadiums:
         try:
@@ -444,7 +461,7 @@ def scrape_countries() -> Iterator[Country]:
 @timed("country scraping", precision=2)
 def scrape_country_stadiums(country: Country) -> CountryStadiumsData | None:
     _log.info(f"Scraping {country.name!r} started...")
-    stadiums = [*scrape_stadiums(country.id)]
+    stadiums = [*scrape_stadiums(country)]
     url = URL.format(country.id)
     if not stadiums:
         _log.warning(f"Nothing has been scraped for {url!r}")

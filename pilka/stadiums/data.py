@@ -157,6 +157,7 @@ class League(_JsonSerializable):
 class BasicStadium(_JsonSerializable):
     name: str
     url: str
+    country: str
     town: str | Town
     clubs: tuple[str, ...]
     capacity: int
@@ -195,13 +196,15 @@ class Duration(_JsonSerializable):
 
 @dataclass(frozen=True)
 class Stadium(BasicStadium):
-    country: str
     address: str | None
+    construction: date | Duration | None
     inauguration: date | None
     inauguration_details: str | None
     renovations: tuple[date | Duration, ...] | None
     cost: Cost | None
     illumination_lux: int | None
+    record_attendance: int | None
+    record_attendance_details: str | None
     description: str | None
 
     @property
