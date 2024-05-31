@@ -152,7 +152,7 @@ def get_tier(capacity: int) -> str:
 @dataclass(frozen=True)
 class League(_JsonSerializable):
     name: str
-    tier: int
+    tier: int | None = None
 
 
 @dataclass(frozen=True)
@@ -176,6 +176,13 @@ _KORONA_INAUGURATION = datetime(2006, 4, 1, 0, 0)
 class Cost(_JsonSerializable):
     amount: int
     currency: str
+
+    def __add__(self, other: "Cost") -> "Cost":
+        if not isinstance(other, Cost):
+            return NotImplemented
+        if self.currency != other.currency:
+            raise ValueError("Cannot add costs with different currencies")
+        return Cost(amount=self.amount + other.amount, currency=self.currency)
 
 
 @dataclass(frozen=True)

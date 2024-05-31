@@ -88,7 +88,7 @@ def extract_float(text: str) -> float:
     num = "".join([char for char in text if char.isdigit() or char in ",."])
     if not num:
         raise ParsingError(f"No digits or decimal point in text: {text!r}")
-    return float(text.replace(",", "."))
+    return float(num.replace(",", "."))
 
 
 @type_checker(str)

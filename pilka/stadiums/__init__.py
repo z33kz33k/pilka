@@ -24,7 +24,7 @@ from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
 from pilka.stadiums.data import Cost, Country, CountryStadiumsData, League, Stadium, Town, \
     BasicStadium
-from pilka.utils import extract_float, extract_int, getdir, timed
+from pilka.utils import ParsingError, extract_float, extract_int, getdir, timed
 from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 
 _log = logging.getLogger(__name__)
@@ -76,13 +76,14 @@ def scrape_basic_data(country_id="pol") -> list[BasicStadium]:
             clubs = [club.strip() for club in clubs_tag.text.split(", ") if club.strip() != "-"]
             cap = extract_int(cap_tag.text)
             league = League(leagues[idx], idx if has_national else idx + 1)
+            league = League(league.name) if league.name == "Other" else league
             basic_stadiums.append(BasicStadium(name, url, town, tuple(clubs), cap, league))
 
     return basic_stadiums
 
 
 def throttling_delay() -> float:
-    return round(random.uniform(0.4, 1.2), 3)
+    return round(random.uniform(0.6, 1.2), 3)
 
 
 # TODO: parse more fields
@@ -100,7 +101,7 @@ class DetailsScraper:
         "illumination": "Floodlights",
     }
     # DEBUG
-    TEMP_FIELDS: dict[str, str] = {}
+    AGGREGATED_FIELDS: defaultdict[str, list[str]] = defaultdict(list)
 
     def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
@@ -174,7 +175,7 @@ class DetailsScraper:
             header = row.find("th").text.strip()
             # DEBUG
             if header:
-                self.TEMP_FIELDS[header] = self._basic_data.url
+                self.AGGREGATED_FIELDS[header].append(self._basic_data.url)
 
             if header == self.ROWS["country"]:
                 country = row.find("td").find("a").text.strip().strip('"')
@@ -185,10 +186,16 @@ class DetailsScraper:
             elif header == self.ROWS["renovation"]:
                 renovation = self._parse_renovation(row)
             elif header == self.ROWS["cost"]:
-                cost = self._parse_cost(row)
+                text = row.find("td").text.strip()
+                cost = self._parse_cost(text)
+                if not cost:
+                    _log.warning(f"Unable to parse cost from: {self._basic_data.url!r}")
             elif header == self.ROWS["illumination"]:
                 text = row.find("td").text.strip()
-                illumination = extract_int(text) if not all(ch.isalpha() for ch in text) else None
+                try:
+                    illumination = extract_int(text)
+                except ParsingError:
+                    pass
 
         return Stadium(
             **asdict(self._basic_data),
@@ -203,70 +210,158 @@ class DetailsScraper:
 
 
 class _CostSubParser:
-    QUALIFIERS = "million", "mln", "billion", "bln"
+    MILLION_QUALIFIERS = "million", "mln", "M", "m"
+    BILLION_QUALIFIERS = "billion", "bln", "B", "b"
+    APPROXIMATORS = "approx. ", "app. "
+    COMPOUND_SEPS = " + ", ", "
 
-    def __init__(self, row: Tag) -> None:
-        self._text = self._prepare_text(row)
-        self._tokens = self._text.split()
+    def __init__(self, text: str) -> None:
+        self._text = self._prepare_text(text)
+        self._tokens = [t.strip() for t in self._text.split()]
 
-    @staticmethod
-    def _prepare_text(row: Tag) -> str:
-        text = row.find("td").text.strip()
+    @classmethod
+    def _prepare_text(cls, text: str) -> str:
         if "(" in text:
             text, *_ = text.split("(")
             text = text.strip()
-        if text.startswith("ok. "):
-            text = text[4:]
+        if " + " in text:
+            text, *_ = text.split(" + ")
+            text = text.strip()
+        for approx in cls.APPROXIMATORS:
+            if text.startswith(approx):
+                text = text[len(approx):]
+                break
         return text
 
     @classmethod
-    def _identify_qualifier(cls, *tokens: str) -> tuple[int, str]:
+    def _identify_qualifier(cls, *tokens: str, strict=False) -> tuple[int, str]:
+        qualifiers = (*cls.MILLION_QUALIFIERS, *cls.BILLION_QUALIFIERS)
         for i, token in enumerate(tokens):
-            for qualifier in cls.QUALIFIERS:
-                if token == qualifier:
-                    return i, qualifier
+            for qualifier in qualifiers:
+                if strict:
+                    if token == qualifier:
+                        return i, qualifier
+                else:
+                    if token.endswith(qualifier):
+                        return i, qualifier
         return -1, ""
 
     @classmethod
-    def _get_amount(cls, amount_text: str, qualifier: str) -> int:
-        base_amount = extract_float(amount_text)
-        if qualifier in cls.QUALIFIERS[:2]:
+    def _get_qualified_amount(cls, amount: str, qualifier: str) -> int:
+        base_amount = extract_float(amount)
+        if qualifier in cls.MILLION_QUALIFIERS:
             return int(base_amount * 1_000_000)
         return int(base_amount * 1_000_000_000)
 
-    def _handle_merged_qualifier(self) -> Cost | None:
-        idx, found = self._identify_qualifier(*self._tokens)
-        if idx == -1:
+    @staticmethod
+    def _split_currency_and_amount_str(text: str) -> tuple:
+        match = re.search(r"\d", text)
+        if not match:
+            return ()
+        return text[:match.start()], text[match.start():]
+
+    def _handle_single_token(self) -> Cost | None:
+        _, qualifier = self._identify_qualifier(self._text)
+        text = self._text[:-len(qualifier)] if qualifier else self._text
+        result = self._split_currency_and_amount_str(text)
+        if not result:
             return None
-        if idx == 0:
-            qualifier, currency = self._tokens
-        else:
-            currency, qualifier = self._tokens
+        currency, amount_str = result
+        if qualifier:
+            return Cost(self._get_qualified_amount(amount_str, qualifier), currency)
         try:
-            return Cost(self._get_amount(qualifier, found), currency)
+            return Cost(extract_int(amount_str), currency)
         except ValueError:
             return None
 
+    def _handle_two_tokens_no_qualifier(self) -> Cost | None:
+        first, second = self._tokens
+        if all(ch.isalpha() for ch in first):
+            currency, amount_str = first, second
+        elif all(ch.isalpha() for ch in second):
+            amount_str, currency = first, second
+        else:
+            return None
+        try:
+            return Cost(extract_int(amount_str), currency)
+        except ValueError:
+            return None
+
+    def _handle_two_tokens(self) -> Cost | None:
+        idx, found = self._identify_qualifier(*self._tokens)
+        if idx == -1:
+            return self._handle_two_tokens_no_qualifier()
+
+        # qualifier is a token so the other is a merged currency-amount
+        if found in self._tokens:
+            merged = self._tokens[0] if idx == 1 else self._tokens[1]
+            result = self._split_currency_and_amount_str(merged)
+            if not result:
+                return None
+            currency, amount_str = result
+            return Cost(self._get_qualified_amount(amount_str, found), currency)
+
+        if idx == 0:
+            amount_str, currency = self._tokens
+        else:
+            currency, amount_str = self._tokens
+        try:
+            return Cost(self._get_qualified_amount(amount_str, found), currency)
+        except ValueError:
+            return None
+
+    def _handle_space_delimited_amount(self) -> Cost | None:
+        *amount_tokens, currency = self._tokens
+        amount_str = "".join(amount_tokens)
+        try:
+            amount = extract_float(amount_str)
+            return Cost(int(amount), currency)
+        except ValueError:
+            return None
+
+    def _handle_compound_cost(self) -> Cost | None:
+        add, comma = self.COMPOUND_SEPS
+        sep = add if add in self._text else comma
+        tokens = self._text.split(sep)
+
+        compound = None
+        for t in tokens:
+            cost = _CostSubParser(t).parse()
+            if cost is not None:
+                if compound is None:
+                    compound = cost
+                else:
+                    try:
+                        compound += cost
+                    except ValueError:
+                        pass
+        return compound
+
     def parse(self) -> Cost | None:
-        # text = row.find("td").text.strip()
+        if any(sep in self._text for sep in self.COMPOUND_SEPS):
+            return self._handle_compound_cost()
         if len(self._tokens) == 2:
-            return self._handle_merged_qualifier()
+            return self._handle_two_tokens()
         elif len(self._tokens) == 3:
-            idx, found = self._identify_qualifier(*self._tokens)
+            idx, found = self._identify_qualifier(*self._tokens, strict=True)
             if idx == 1:
-                amount, _, currency = self._tokens
+                amount_str, _, currency = self._tokens
             elif idx == 2:
-                currency, amount, _ = self._tokens
+                currency, amount_str, _ = self._tokens
             else:
                 return None
-            return Cost(self._get_amount(amount, found), currency)
+            return Cost(self._get_qualified_amount(amount_str, found), currency)
+        elif len(self._tokens) > 3 and all(ch.isalpha() for ch in self._tokens[-1]):
+            return self._handle_space_delimited_amount()
 
         _log.warning(f"Unexpected cost string: {self._text!r}")
         return None
 
 
 class _CostSubParserPl(_CostSubParser):
-    QUALIFIERS = "milion", "mln", "miliard", "mld"
+    MILLION_QUALIFIERS = "milion", "mln"
+    BILLION_QUALIFIERS = "miliard", "mld"
+    APPROXIMATORS = "ok. ",
 
 
 class DetailsScraperPl(DetailsScraper):
@@ -358,9 +453,6 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
             country_stadiums_data = scrape_country_stadiums(country)
             if country_stadiums_data:
                 data["countries"].append(country_stadiums_data.json)
-                # DEBUG
-                from pprint import pprint
-                pprint(DetailsScraper.TEMP_FIELDS)
         except Exception as e:
             _log.error(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
 
