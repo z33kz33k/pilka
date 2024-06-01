@@ -92,6 +92,7 @@ def throttling_delay() -> float:
 T2 = TypeVar("T2")
 
 
+# TODO: capacity details
 class DetailsScraper:
     ROWS = {
         "address": {"Address", "Addres", "Adfress"},
@@ -127,12 +128,18 @@ class DetailsScraper:
             "Dentro del proyecto"
         },
     }
-    DURATION_SEPARATORS = "-", "–", "/"
+    DURATION_SEPARATORS = "-", "–", "−", "/"  # those are different glyphs
 
     def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
         self._soup: BeautifulSoup | None = None
         self._text: str | None = None
+
+    @staticmethod
+    def _trim_multiples(text: str) -> str:
+        if ", " in text:
+            text, *_ = text.split(", ")
+        return text
 
     @staticmethod
     def _split_parenthesized(text: str) -> tuple[str, str]:
@@ -162,7 +169,7 @@ class DetailsScraper:
     @classmethod
     def _parse_duration(cls, text: str) -> date | Duration | None:
         sep = from_iterable(cls.DURATION_SEPARATORS, lambda s: s in text)
-        if not sep:
+        if not sep or len(text) in (7, 10):
             try:
                 return extract_date(text)
             except ParsingError:
@@ -248,10 +255,13 @@ class DetailsScraper:
                 if not other_names:
                     _log.warning(f"Unable to parse other names from: {self._basic_data.url!r}")
             elif header in self.ROWS["illumination"]:
-                try:
-                    illumination = extract_int(self._text)
-                except ParsingError:
-                    _log.warning(f"Unable to parse illumination from: {self._basic_data.url!r}")
+                if self._text == "none":
+                    illumination = 0
+                else:
+                    try:
+                        illumination = extract_int(self._text)
+                    except ParsingError:
+                        _log.warning(f"Unable to parse illumination from: {self._basic_data.url!r}")
             elif header in self.ROWS["record_attendance"]:
                 record_attendance = self._parse_text_with_details(self._text, text_func=extract_int)
                 if record_attendance:
@@ -266,17 +276,17 @@ class DetailsScraper:
                 if not cost:
                     _log.warning(f"Unable to parse cost from: {self._basic_data.url!r}")
             elif header in self.ROWS["design"]:
-                design = self._parse_duration(self._text)
+                design = self._parse_duration(self._trim_multiples(self._text))
                 if not design:
                     _log.warning(f"Unable to parse design from: {self._basic_data.url!r}")
             elif header in self.ROWS["construction"]:
-                construction = self._parse_duration(self._text)
+                construction = self._parse_duration(self._trim_multiples(self._text))
                 if not construction:
                     _log.warning(f"Unable to parse construction from: {self._basic_data.url!r}")
             elif header in self.ROWS["inauguration"]:
                 if not inauguration:
-                    inauguration = self._parse_text_with_details(
-                        self._text, text_func=extract_date)
+                    text = self._trim_multiples(self._text)
+                    inauguration = self._parse_text_with_details(text, text_func=extract_date)
                     if inauguration:
                         inauguration, inauguration_details = inauguration
                         inauguration_details = trim_suffix(
@@ -289,7 +299,7 @@ class DetailsScraper:
                     _log.warning(f"Unable to parse renovations from: {self._basic_data.url!r}")
             elif header in self.ROWS["designer"]:
                 text = self._text
-                if ", " in text:
+                if ", " in text or " / " in text:
                     designer = clean_parenthesized(text)
                 else:
                     designer = self._parse_text_with_details(text, details_func=self._parse_duration)
@@ -334,9 +344,10 @@ class DetailsScraper:
 
 
 class _CostSubParser:
-    MILLION_QUALIFIERS = "million", "mln", "M", "m"
-    BILLION_QUALIFIERS = "billion", "bln", "B", "b"
-    APPROXIMATORS = "approx. ", "app. "
+    MILLION_QUALIFIERS = "million", "mln", "M", "m", "milion", "Million", "millones"
+    BILLION_QUALIFIERS = "billion", "bln", "B", "b", "N", "miliard", "mld"
+    TRILLION_QUALIFIERS = "trillion",
+    APPROXIMATORS = "approx. ", "app. ", "ok. "
     COMPOUND_SEPARATORS = " + ", ", "
 
     def __init__(self, text: str) -> None:
@@ -349,15 +360,14 @@ class _CostSubParser:
         if " / " in text:
             *_, text = text.split(" / ")
             text = text.strip()
-        for approx in cls.APPROXIMATORS:
-            if text.startswith(approx):
-                text = text[len(approx):]
-                break
+        approx = from_iterable(cls.APPROXIMATORS, lambda a: text.startswith(a))
+        if approx:
+            text = text[len(approx):]
         return text
 
     @classmethod
     def _identify_qualifier(cls, *tokens: str, strict=False) -> tuple[int, str]:
-        qualifiers = (*cls.MILLION_QUALIFIERS, *cls.BILLION_QUALIFIERS)
+        qualifiers = (*cls.MILLION_QUALIFIERS, *cls.BILLION_QUALIFIERS, *cls.TRILLION_QUALIFIERS)
         for i, token in enumerate(tokens):
             for qualifier in qualifiers:
                 if strict:
@@ -373,7 +383,9 @@ class _CostSubParser:
         base_amount = extract_float(amount)
         if qualifier in cls.MILLION_QUALIFIERS:
             return int(base_amount * 1_000_000)
-        return int(base_amount * 1_000_000_000)
+        if qualifier in cls.BILLION_QUALIFIERS:
+            return int(base_amount * 1_000_000_000)
+        return int(base_amount * 1_000_000_000_000)
 
     @staticmethod
     def _split_merged(text: str) -> tuple:
@@ -398,9 +410,9 @@ class _CostSubParser:
 
     def _handle_two_tokens_no_qualifier(self) -> Cost | None:
         first, second = self._tokens
-        if all(ch.isalpha() for ch in first):
+        if all(not ch.isdigit() for ch in first):
             currency, amount_str = first, second
-        elif all(ch.isalpha() for ch in second):
+        elif all(not ch.isdigit() for ch in second):
             amount_str, currency = first, second
         else:
             return None
@@ -481,19 +493,14 @@ class _CostSubParser:
             return self._handle_two_tokens()
         elif len(self._tokens) == 3:
             return self._handle_three_tokens()
-        elif len(self._tokens) > 3 and all(ch.isalpha() for ch in self._tokens[-1]):
+        elif len(self._tokens) > 3 and all(not ch.isdigit() for ch in self._tokens[-1]):
             return self._handle_space_delimited_amount()
 
         _log.warning(f"Unexpected cost string: {self._text!r}")
         return None
 
 
-class _CostSubParserPl(_CostSubParser):
-    MILLION_QUALIFIERS = "milion", "mln"
-    BILLION_QUALIFIERS = "miliard", "mld"
-    APPROXIMATORS = "ok. ",
-
-
+# TODO
 class DetailsScraperPl(DetailsScraper):
     ROWS = {
         "country": {"Kraj"},
@@ -508,10 +515,6 @@ class DetailsScraperPl(DetailsScraper):
         if "stadiony.net" not in basic_data.url:
             raise ValueError(f"Invalid URL for a Polish scraper: {basic_data.url!r}")
         super().__init__(basic_data)
-
-    @staticmethod
-    def _parse_cost(text: str) -> Cost | None:  # override
-        return _CostSubParserPl(text).parse()
 
 
 def scrape_stadiums(country=POLAND) -> Iterator[Stadium]:

@@ -106,7 +106,7 @@ def extract_int(text: str) -> int:
 def extract_date(text: str, month_in_the_middle=True) -> date:
     """Extract a date object from text.
     """
-    sep, stack = None, ["/", ".", "-"]
+    sep, stack = None, ["/", "–", "−", ".", "-"]  # those are different glyphs
     while stack:
         token = stack.pop()
         if token in text:
@@ -137,7 +137,7 @@ def extract_date(text: str, month_in_the_middle=True) -> date:
             month, day = day, month
 
     elif len(tokens) == 2:
-        day = 1
+        day = "1"
         first, second = tokens
         if len(first) == 4:
             year, month = first, second
@@ -147,9 +147,12 @@ def extract_date(text: str, month_in_the_middle=True) -> date:
             raise ParsingError(f"Not a date text: {text!r}")
 
     elif len(tokens) == 1:
-        year, month, day = tokens[0], 1, 1
+        year, month, day = tokens[0], "1", "1"
 
     else:
+        raise ParsingError(f"Not a date text: {text!r}")
+
+    if not (len(year) == 4 and len(month) in (1, 2) and len(day) in (1, 2)):
         raise ParsingError(f"Not a date text: {text!r}")
 
     try:

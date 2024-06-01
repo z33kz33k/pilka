@@ -30,20 +30,32 @@ def _serialize(data: Json) -> Json:  # recursive
     return data
 
 
+_FIELD_NAMES_TO_CLASS_NAMES = {
+    "town": "Town",
+    "league": "League",
+    "duration": "Duration",
+    "other_names": "Nickname",
+    "cost": "Cost",
+    "country": "Country",
+    "stadiums": "Stadium"
+}
+
+
 def _reconstruct_from_json(types: dict[str, Type[T]], field: str,  data: Json) -> T | Json:
     if not isinstance(data, dict):  # not a structure to reconstruct
         return data
-    if type_ := types.get(field.capitalize()):
-        if hasattr(type_, "from_json"):
-            return type_.from_json(data)
+    if cls_name := _FIELD_NAMES_TO_CLASS_NAMES.get(field):
+        if type_ := types.get(cls_name):
+            if hasattr(type_, "from_json"):
+                return type_.from_json(data)
     return data
 
 
 def _deserialize_substructs(data: Json) -> dict:
     types = get_classes_in_module(__name__)
     for k, v in data.items():
-        if isinstance(v, list) and k.endswith("s"):
-            data[k] = [_reconstruct_from_json(types, k[:-1], item) for item in v]
+        if isinstance(v, list):
+            data[k] = [_reconstruct_from_json(types, k, item) for item in v]
         else:
             data[k] = _reconstruct_from_json(types, k, v)
     return data
@@ -265,6 +277,7 @@ class Country(_JsonSerializable):
 POLAND = Country(name='Poland', id='pol', confederation='UEFA')
 ENGLAND = Country(name='England', id='eng', confederation='UEFA')
 HONG_KONG = Country(name="Hong Kong", id="hkg", confederation="AFC")
+USA = Country(name="United States of America", id="usa", confederation="CONCACAF")
 
 
 @dataclass(frozen=True)
