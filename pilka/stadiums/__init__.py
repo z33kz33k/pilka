@@ -24,8 +24,8 @@ from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     READABLE_TIMESTAMP_FORMAT
 from pilka.stadiums.data import Cost, Country, CountryStadiumsData, Duration, League, Nickname, \
     Stadium, Town, BasicStadium, POLAND
-from pilka.utils import ParsingError, extract_date, extract_float, extract_int, getdir, timed, \
-    clean_parenthesized
+from pilka.utils import ParsingError, extract_date, extract_float, extract_int, from_iterable, \
+    getdir, timed, clean_parenthesized, trim_suffix
 from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 from pilka.constants import T
 
@@ -86,7 +86,7 @@ def scrape_basic_data(country=POLAND) -> list[BasicStadium]:
 
 
 def throttling_delay() -> float:
-    return round(random.uniform(0.6, 1.2), 3)
+    return round(random.uniform(0.6, 1.5), 3)
 
 
 T2 = TypeVar("T2")
@@ -127,7 +127,7 @@ class DetailsScraper:
             "Dentro del proyecto"
         },
     }
-    DURATION_SEPARATORS = "-", "–"
+    DURATION_SEPARATORS = "-", "–", "/"
 
     def __init__(self, basic_data: BasicStadium) -> None:
         self._basic_data = basic_data
@@ -148,7 +148,10 @@ class DetailsScraper:
     ) -> tuple[T | str, T2 | str | None] | None:
         details = None
         if "(" in text:
-            text, details = cls._split_parenthesized(text)
+            try:
+                text, details = cls._split_parenthesized(text)
+            except ValueError:
+                text, *_ = text.split("(")
         try:
             text = text_func(text) if text_func else text
             details = details_func(details) if details_func and details else details
@@ -158,11 +161,8 @@ class DetailsScraper:
 
     @classmethod
     def _parse_duration(cls, text: str) -> date | Duration | None:
-        if cls.DURATION_SEPARATORS[0] in text:
-            sep = cls.DURATION_SEPARATORS[0]
-        elif cls.DURATION_SEPARATORS[1] in text:
-            sep = cls.DURATION_SEPARATORS[1]
-        else:
+        sep = from_iterable(cls.DURATION_SEPARATORS, lambda s: s in text)
+        if not sep:
             try:
                 return extract_date(text)
             except ParsingError:
@@ -186,8 +186,7 @@ class DetailsScraper:
             return None
 
     def _parse_renovations(self) -> tuple[datetime | Duration, ...] | None:
-        pattern = r"\(.*?\)"
-        cleaned_text = re.sub(pattern, "", self._text)  # get rid of anything within parentheses
+        cleaned_text = clean_parenthesized(self._text)
         renovations = []
         for token in cleaned_text.split(","):
             token = token.strip()
@@ -243,7 +242,7 @@ class DetailsScraper:
             header = row.find("th").text.strip()
             self._text = row.find("td").text.strip()
             if header in self.ROWS["address"]:
-                address = self._text
+                address = trim_suffix(self._text, ".")
             elif header in self.ROWS["other_names"]:
                 other_names = self._parse_other_names()
                 if not other_names:
@@ -257,6 +256,8 @@ class DetailsScraper:
                 record_attendance = self._parse_text_with_details(self._text, text_func=extract_int)
                 if record_attendance:
                     record_attendance, record_attendance_details = record_attendance
+                    record_attendance_details = trim_suffix(
+                        record_attendance_details, ".") if record_attendance_details else None
                 else:
                     _log.warning(
                         f"Unable to parse record attendance from: {self._basic_data.url!r}")
@@ -278,6 +279,8 @@ class DetailsScraper:
                         self._text, text_func=extract_date)
                     if inauguration:
                         inauguration, inauguration_details = inauguration
+                        inauguration_details = trim_suffix(
+                            inauguration_details, ".") if inauguration_details else None
                     else:
                         _log.warning(f"Unable to parse inauguration from: {self._basic_data.url!r}")
             elif header in self.ROWS["renovations"]:
@@ -287,24 +290,26 @@ class DetailsScraper:
             elif header in self.ROWS["designer"]:
                 text = self._text
                 if ", " in text:
-                    design = clean_parenthesized(text)
+                    designer = clean_parenthesized(text)
                 else:
                     designer = self._parse_text_with_details(text, details_func=self._parse_duration)
                     if designer:
                         designer, design = designer
                     else:
                         _log.warning(f"Unable to parse designer from: {self._basic_data.url!r}")
+                designer = trim_suffix(designer, ".") if designer else None
             elif header in self.ROWS["structural_engineer"]:
-                structural_engineer = self._text
+                structural_engineer = trim_suffix(self._text, ".")
             elif header in self.ROWS["contractor"]:
-                contractor = clean_parenthesized(self._text)
+                contractor = trim_suffix(clean_parenthesized(self._text), ".")
             elif header in self.ROWS["investor"]:
-                investor = self._text
+                investor = trim_suffix(self._text, ".")
             elif header in self.ROWS["note"]:
                 if note and self._text:
-                    note += ", " + self._text[0].lower + self._text[1:]
+                    note += ", " + self._text[0].lower() + self._text[1:]
                 else:
                     note = self._text
+                note = trim_suffix(note, ".") if note else None
 
         return Stadium(
             **asdict(self._basic_data),
