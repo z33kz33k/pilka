@@ -9,7 +9,7 @@
 """
 from dataclasses import Field, asdict, dataclass, fields
 from datetime import date, timedelta
-from typing import Type
+from typing import Any, Type
 
 from pilka.constants import Json, T
 from pilka.utils import get_classes_in_module, get_properties, tolist, totuple
@@ -49,14 +49,36 @@ def _deserialize_substructs(data: Json) -> dict:
     return data
 
 
-def _deserialize_dates(data: Json, field: Field) -> Json:
+def _deserialize_date(obj: Any) -> date | Any:
     try:
-        if date.__name__ in str(field.type):
-            data[field.name] = date.fromisoformat(data[field.name])
-        elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
-            data[field.name] = [date.fromisoformat(item) for item in data[field.name]]
+        return date.fromisoformat(obj)
     except ValueError:
-        pass
+        return obj
+
+
+def _is_duration(data: Json) -> bool:
+    if not isinstance(data, dict):
+        return False
+    for k, v in data.items():
+        if k not in ("start", "end"):
+            return False
+        if not isinstance(_deserialize_date(v), date):
+            return False
+    return True
+
+
+def _deserialize_dates_and_durations(data: Json, field: Field) -> Json:
+    if date.__name__ in str(field.type):
+        data[field.name] = _deserialize_date(data[field.name])
+    elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
+        duration_cls = get_classes_in_module(__name__).get("Duration")
+        new_list = []
+        for item in data[field.name]:
+            if duration_cls and _is_duration(item):
+                new_list.append(duration_cls(**item))
+            else:
+                new_list.append(_deserialize_date(item))
+        data[field.name] = new_list
     return data
 
 
@@ -75,7 +97,7 @@ class _JsonSerializable:
             if data.get(f.name) is None:
                 data[f.name] = None
             else:
-                data = _deserialize_dates(data, f)
+                data = _deserialize_dates_and_durations(data, f)
         data = _deserialize_substructs(data)
         for f in fields(cls):
             if isinstance(data.get(f.name), list):

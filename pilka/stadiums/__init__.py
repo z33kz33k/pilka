@@ -88,7 +88,7 @@ def throttling_delay() -> float:
     return round(random.uniform(0.6, 1.2), 3)
 
 
-# TODO: parse more fields
+# TODO: parse more fields, move throttling inside getsoup as parameter
 class DetailsScraper:
     ROWS = {
         "address": {"Address", "Addres", "Adfress"},
