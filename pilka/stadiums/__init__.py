@@ -169,7 +169,7 @@ class DetailsScraper:
     @classmethod
     def _parse_duration(cls, text: str) -> date | Duration | None:
         sep = from_iterable(cls.DURATION_SEPARATORS, lambda s: s in text)
-        if not sep or len(text) in (7, 10):
+        if not sep or (sep == "/" and len(text) in (7, 10)):
             try:
                 return extract_date(text)
             except ParsingError:
@@ -193,7 +193,8 @@ class DetailsScraper:
             return None
 
     def _parse_renovations(self) -> tuple[datetime | Duration, ...] | None:
-        cleaned_text = clean_parenthesized(self._text)
+        text = trim_suffix(self._text, ".")
+        cleaned_text = clean_parenthesized(text)
         renovations = []
         for token in cleaned_text.split(","):
             token = token.strip()
@@ -272,19 +273,21 @@ class DetailsScraper:
                     _log.warning(
                         f"Unable to parse record attendance from: {self._basic_data.url!r}")
             elif header in self.ROWS["cost"]:
-                cost = self._parse_cost()
-                if not cost:
-                    _log.warning(f"Unable to parse cost from: {self._basic_data.url!r}")
+                if not cost:  # ignore duplicated fields
+                    cost = self._parse_cost()
+                    if not cost:
+                        _log.warning(f"Unable to parse cost from: {self._basic_data.url!r}")
             elif header in self.ROWS["design"]:
                 design = self._parse_duration(self._trim_multiples(self._text))
                 if not design:
                     _log.warning(f"Unable to parse design from: {self._basic_data.url!r}")
             elif header in self.ROWS["construction"]:
-                construction = self._parse_duration(self._trim_multiples(self._text))
-                if not construction:
-                    _log.warning(f"Unable to parse construction from: {self._basic_data.url!r}")
+                if not construction:  # ignore duplicated fields
+                    construction = self._parse_duration(self._trim_multiples(self._text))
+                    if not construction:
+                        _log.warning(f"Unable to parse construction from: {self._basic_data.url!r}")
             elif header in self.ROWS["inauguration"]:
-                if not inauguration:
+                if not inauguration:  # ignore duplicated fields
                     text = self._trim_multiples(self._text)
                     inauguration = self._parse_text_with_details(text, text_func=extract_date)
                     if inauguration:
@@ -341,6 +344,23 @@ class DetailsScraper:
             note=note,
             description=self._parse_description()
         )
+
+
+# TODO
+class DetailsScraperPl(DetailsScraper):
+    ROWS = {
+        "country": {"Kraj"},
+        "address": {"Adres"},
+        "inauguration": {"Inauguracja"},
+        "renovation": {"Renowacje"},
+        "cost": {"Koszt"},
+        "illumination": {"Oświetlenie"},
+    }
+
+    def __init__(self, basic_data: BasicStadium) -> None:
+        if "stadiony.net" not in basic_data.url:
+            raise ValueError(f"Invalid URL for a Polish scraper: {basic_data.url!r}")
+        super().__init__(basic_data)
 
 
 class _CostSubParser:
@@ -498,23 +518,6 @@ class _CostSubParser:
 
         _log.warning(f"Unexpected cost string: {self._text!r}")
         return None
-
-
-# TODO
-class DetailsScraperPl(DetailsScraper):
-    ROWS = {
-        "country": {"Kraj"},
-        "address": {"Adres"},
-        "inauguration": {"Inauguracja"},
-        "renovation": {"Renowacje"},
-        "cost": {"Koszt"},
-        "illumination": {"Oświetlenie"},
-    }
-
-    def __init__(self, basic_data: BasicStadium) -> None:
-        if "stadiony.net" not in basic_data.url:
-            raise ValueError(f"Invalid URL for a Polish scraper: {basic_data.url!r}")
-        super().__init__(basic_data)
 
 
 def scrape_stadiums(country=POLAND) -> Iterator[Stadium]:
