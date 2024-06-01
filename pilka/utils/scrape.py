@@ -56,12 +56,13 @@ def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
     return BeautifulSoup(response.text, "lxml")
 
 
-def throttle(delay: float) -> None:
-    _log.info(f"Throttling for {delay} seconds...")
-    time.sleep(delay)
+def throttle(delay: float | Callable[..., float]) -> None:
+    amount = delay() if callable(delay) else delay
+    _log.info(f"Throttling for {amount} seconds...")
+    time.sleep(amount)
 
 
-def throttled(delay: float | Callable) -> Callable:
+def throttled(delay: float | Callable[..., float]) -> Callable:
     """Add throttling delay after the decorated operation.
 
     Args:
@@ -74,8 +75,7 @@ def throttled(delay: float | Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
-            amount = delay() if callable(delay) else delay
-            throttle(amount)
+            throttle(delay)
             return result
         return wrapper
     return decorate

@@ -217,16 +217,29 @@ class Duration(_JsonSerializable):
 
 
 @dataclass(frozen=True)
+class Nickname(_JsonSerializable):
+    name: str
+    duration: Duration | None
+
+
+@dataclass(frozen=True)
 class Stadium(BasicStadium):
     address: str | None
+    other_names: tuple[Nickname, ...] | None
+    illumination_lux: int | None
+    record_attendance: int | None
+    record_attendance_details: str | None
+    cost: Cost | None
+    design: date | Duration | None
     construction: date | Duration | None
     inauguration: date | None
     inauguration_details: str | None
     renovations: tuple[date | Duration, ...] | None
-    cost: Cost | None
-    illumination_lux: int | None
-    record_attendance: int | None
-    record_attendance_details: str | None
+    designer: str | None
+    structural_engineer: str | None
+    contractor: str | None
+    investor: str | None
+    note: str | None
     description: str | None
 
     @property
@@ -234,7 +247,8 @@ class Stadium(BasicStadium):
         last_renovation = self.renovations[-1] if self.renovations else None
         if isinstance(last_renovation, Duration):
             last_renovation = last_renovation.end
-        dates = [d for d in (self.inauguration, last_renovation) if d is not None]
+        dates = self.design, self.construction, self.inauguration, last_renovation
+        dates = [d for d in dates if d is not None]
         if not dates:
             return False
         result = max(dates)

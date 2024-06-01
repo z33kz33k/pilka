@@ -10,6 +10,7 @@
 import inspect
 import os
 import logging
+import re
 import sys
 from datetime import date, datetime, timedelta
 from functools import wraps
@@ -112,14 +113,16 @@ def extract_date(text: str, month_in_the_middle=True) -> date:
             sep = token
             break
 
-    if not sep:
-        raise ParsingError(f"Not a date text: {text!r}")
-
     datestr = "".join([char for char in text if char.isdigit() or char == sep])
     if not datestr:
         raise ParsingError(f"Not a date text: {text!r}")
 
-    tokens = datestr.split(sep)
+    if len(datestr) == 4:
+        tokens = [datestr]
+    else:
+        if not sep:
+            raise ParsingError(f"Not a date text: {text!r}")
+        tokens = datestr.split(sep)
 
     if len(tokens) == 3:
         first, second, third = tokens
@@ -298,3 +301,15 @@ def cleardir(obj: object) -> list[str]:
     """Return ``dir(obj)`` without extraneous fluff.
     """
     return [attr for attr in dir(obj) if not attr.startswith("_")]
+
+
+def clean_parenthesized(text: str) -> str:
+    """Get rid of anything in text within (single or multiple) parentheses.
+    """
+    if " (" in text:
+        pattern = r"\s\(.*?\)"
+        text = re.sub(pattern, "", text)
+    if "(" in text:
+        pattern = r"\(.*?\)"
+        text = re.sub(pattern, "", text)
+    return text
