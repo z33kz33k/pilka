@@ -82,7 +82,7 @@ def scrape_basic_data(country=POLAND) -> list[BasicStadium]:
             clubs = [normalize(club.strip()) for club in clubs_tag.text.split(", ")
                      if club.strip() != "-"]
             league = League(leagues[idx], idx if has_national else idx + 1)
-            league = League(league.name) if league.name == "Other" else league
+            league = League(league.name) if league.name in ("Other", "Inne") else league
             cap = extract_int(cap_tag.text)
             basic_stadiums.append(
                 BasicStadium(name, url, country.name, town, tuple(clubs), league, cap))

@@ -1,5 +1,5 @@
 {
-    "timestamp": "2024-06-02 15:23:16",
+    "timestamp": "2024-06-02 23:50:07",
     "countries": [
         {
             "country": {
@@ -4103,6 +4103,7 @@
                         }
                     ],
                     "address": "Mountfield Road, Lewes, East Sussex, BN7 2XA",
+                    "inauguration": "1730-01-01",
                     "renovations": [
                         "2003-01-01",
                         "2007-01-01"
