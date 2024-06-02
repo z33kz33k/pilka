@@ -280,7 +280,7 @@ class DetailsScraper:
                 text = text.strip()
             try:
                 return extract_date(text), None
-            except ParsingError:
+            except ValueError:
                 return None
 
     def _parse_designer(self) -> tuple[str, date | Duration | None] | None:
@@ -391,7 +391,10 @@ class DetailsScraper:
                     _log.warning(f"Unable to parse design from: {self._basic_data.url!r}")
             elif header in self.ROWS["construction"]:
                 if not construction:  # ignore duplicated fields
-                    construction = self._parse_duration(self._trim_multiples(self._text))
+                    try:
+                        construction = self._parse_duration(self._trim_multiples(self._text))
+                    except ValueError:
+                        construction = None
                     if not construction:
                         _log.warning(f"Unable to parse construction from: {self._basic_data.url!r}")
             elif header in self.ROWS["inauguration"]:
