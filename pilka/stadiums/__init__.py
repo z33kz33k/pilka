@@ -131,6 +131,7 @@ class DetailsScraper:
             "Hints", "Note", "Notes", "Notice", "Notices", "Other", "Others", "Within the project",
             "Dentro del proyecto"
         },
+        "track_length": {},
     }
     DURATION_SEPARATORS = "-", "/"  # those are different glyphs
 
@@ -138,10 +139,6 @@ class DetailsScraper:
         self._basic_data = basic_data
         self._soup: BeautifulSoup | None = None
         self._text: str | None = None
-
-    @staticmethod
-    def _normalize(text: str) -> str:
-        return text.replace("–", "-").replace("−", "-").replace("’", "'")
 
     @staticmethod
     def _trim_multiples(text: str) -> str:
@@ -249,10 +246,25 @@ class DetailsScraper:
             text = self._trim_multiples(self._text)
         else:
             text = self._text
-        inauguration = self._parse_text_with_details(text, text_func=extract_date)
+        first, second,  *rest = text.split("(")
+        if rest:
+            text = f"{first}({second}"
+
+        second_is_date = len([ch.isdigit() for ch in second]) >= 4
+
+        if second_is_date:
+            inauguration = self._parse_text_with_details(text, details_func=extract_date)
+        else:
+            inauguration = self._parse_text_with_details(text, text_func=extract_date)
+
         if not inauguration:
             return None
-        inauguration, inauguration_details = inauguration
+
+        if second_is_date:
+            inauguration_details, inauguration = inauguration
+        else:
+            inauguration, inauguration_details = inauguration
+
         inauguration_details = trim_suffix(
             inauguration_details, ".") if inauguration_details else None
         return inauguration, inauguration_details
@@ -311,7 +323,7 @@ class DetailsScraper:
         if h2 is not None:
             lines.append(h2.text)
         lines += [p.text for p in article.find_all("p")]
-        return self._normalize("\n".join(lines)) if lines else None
+        return normalize("\n".join(lines)) if lines else None
 
     @throttled(throttling_delay)
     def scrape(self) -> Stadium:
@@ -332,11 +344,11 @@ class DetailsScraper:
         # personal/corporate
         designer, structural_engineer, contractor, investor = None, None, None, None
         # other
-        note = None
+        note, track_length = None, None
 
         for row in table.find_all("tr"):
             header = row.find("th").text.strip()
-            self._text = self._normalize(row.find("td").text.strip())
+            self._text = normalize(row.find("td").text.strip())
             if header in self.ROWS["address"]:
                 address = trim_suffix(self._text, ".")
             elif header in self.ROWS["other_names"]:
@@ -394,6 +406,8 @@ class DetailsScraper:
                 investor = trim_suffix(self._text, ".")
             elif header in self.ROWS["note"]:
                 note = self._parse_note(note)
+            elif header in self.ROWS["track_length"]:
+                track_length = extract_int(self._text)
             elif not header:
                 sub_capacity = self._parse_sub_capacity(row)
                 if sub_capacity:
@@ -422,20 +436,28 @@ class DetailsScraper:
             contractor=contractor,
             investor=investor,
             note=note,
+            track_length_metres=track_length,
             description=self._parse_description()
         )
 
 
-
-# TODO
 class DetailsScraperPl(DetailsScraper):
     ROWS = {
-        "country": {"Kraj"},
         "address": {"Adres"},
-        "inauguration": {"Inauguracja"},
-        "renovation": {"Renowacje"},
+        "other_names": {"Inne nazwy", "Nazwy potoczne"},
+        "illumination": {"Moc oświetlenia", "Oświetlenie"},
+        "record_attendance": {"Rekord frekwencji"},
         "cost": {"Koszt"},
-        "illumination": {"Oświetlenie"},
+        "design": {"Data projektu"},
+        "construction": {"Budowa", "Czas budowy", "Czas budowa", "Rok budowy"},
+        "inauguration": {"Inauguracja", "Inauguration", "Pierwszy mecz"},
+        "renovations": {"Renowacja", "Renowacje"},
+        "designer": {"Projekt"},
+        "structural_engineer": {},
+        "contractor": {"Wykonawca"},
+        "investor": {"Właściciel"},
+        "note": {"Inne", "Uwagi", "W ramach projektu"},
+        "track_length": {"Długość toru"},
     }
 
     def __init__(self, basic_data: BasicStadium) -> None:

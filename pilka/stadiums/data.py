@@ -261,6 +261,7 @@ class Stadium(BasicStadium):
     contractor: str | None
     investor: str | None
     note: str | None
+    track_length_metres: int | None
     description: str | None
 
     @property

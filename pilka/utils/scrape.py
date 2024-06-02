@@ -82,7 +82,7 @@ def throttled(delay: float | Callable[..., float]) -> Callable:
 
 
 def http_requests_counted(operation="") -> Callable:
-    """Count HTTP requests done the decorated operation.
+    """Count HTTP requests done by the decorated operation.
 
     Args:
         name of the operation
