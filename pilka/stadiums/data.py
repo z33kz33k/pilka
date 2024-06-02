@@ -34,6 +34,7 @@ _FIELD_NAMES_TO_CLASS_NAMES = {
     "town": "Town",
     "league": "League",
     "duration": "Duration",
+    "capacity_details": "SubCapacity",
     "other_names": "Nickname",
     "cost": "Cost",
     "country": "Country",
@@ -194,8 +195,8 @@ class BasicStadium(_JsonSerializable):
     country: str
     town: str | Town
     clubs: tuple[str, ...]
-    capacity: int
     league: League
+    capacity: int
 
     @property
     def tier(self) -> str:
@@ -235,10 +236,18 @@ class Nickname(_JsonSerializable):
 
 
 @dataclass(frozen=True)
+class SubCapacity(_JsonSerializable):
+    capacity: int
+    designation: str | None
+    note: str | None
+
+
+@dataclass(frozen=True)
 class Stadium(BasicStadium):
+    capacity_details: tuple[SubCapacity, ...] | None
     address: str | None
-    other_names: tuple[Nickname, ...] | None
-    illumination_lux: int | None
+    other_names: tuple[str | Nickname, ...] | None
+    floodlights_lux: int | None
     record_attendance: int | None
     record_attendance_details: str | None
     cost: Cost | None
@@ -278,6 +287,8 @@ POLAND = Country(name='Poland', id='pol', confederation='UEFA')
 ENGLAND = Country(name='England', id='eng', confederation='UEFA')
 HONG_KONG = Country(name="Hong Kong", id="hkg", confederation="AFC")
 USA = Country(name="United States of America", id="usa", confederation="CONCACAF")
+CZECHIA = Country(name="Czech Republic", id="cze", confederation="UEFA")
+GERMANY = Country(name="Germany", id="ger", confederation="UEFA")
 
 
 @dataclass(frozen=True)
