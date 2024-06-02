@@ -94,6 +94,7 @@ def throttling_delay() -> float:
     return round(random.uniform(0.8, 1.5), 3)
 
 
+AGGREGATED_FIELDS: defaultdict[str, list[str]] = defaultdict(list)
 T2 = TypeVar("T2")
 
 
@@ -242,32 +243,45 @@ class DetailsScraper:
         return record_attendance, record_attendance_details
 
     def _parse_inauguration(self) -> tuple[date, str | None] | None:
-        if not (self._text.count(", ") == 1 and self._text.count("(") == 1):
-            text = self._trim_multiples(self._text)
-        else:
-            text = self._text
-        first, second,  *rest = text.split("(")
-        if rest:
-            text = f"{first}({second}"
+        text = self._text.strip()
+        if ")" in text:  # trim multiples #1
+            text, *_ = text.split(")")
+            text += ")"
 
-        second_is_date = len([ch.isdigit() for ch in second]) >= 4
+            # trim multiples #2
+            if sep := from_iterable((", ", " / "), lambda s: s in text):
+                if text.index(sep) < text.index("("):
+                    text, *_ = text.split(sep)
+                    text = text.strip()
+                    try:
+                        return extract_date(text), None
+                    except ParsingError:
+                        return None
 
-        if second_is_date:
-            inauguration = self._parse_text_with_details(text, details_func=extract_date)
-        else:
-            inauguration = self._parse_text_with_details(text, text_func=extract_date)
+            # usual case of "text1 (text2)"
+            date_is_first = text[0].isdigit()
+            if date_is_first:
+                inauguration = self._parse_text_with_details(text, text_func=extract_date)
+            else:
+                inauguration = self._parse_text_with_details(text, details_func=extract_date)
+            if not inauguration:
+                return None
+            if date_is_first:
+                inauguration, inauguration_details = inauguration
+            else:
+                inauguration_details, inauguration = inauguration
+            inauguration_details = trim_suffix(
+                inauguration_details, ".") if inauguration_details else None
+            return inauguration, inauguration_details
 
-        if not inauguration:
-            return None
-
-        if second_is_date:
-            inauguration_details, inauguration = inauguration
-        else:
-            inauguration, inauguration_details = inauguration
-
-        inauguration_details = trim_suffix(
-            inauguration_details, ".") if inauguration_details else None
-        return inauguration, inauguration_details
+        else:  # no parentheses
+            if sep := from_iterable((", ", " / "), lambda s: s in text):  # trim multiples
+                text, *_ = text.split(sep)
+                text = text.strip()
+            try:
+                return extract_date(text), None
+            except ParsingError:
+                return None
 
     def _parse_designer(self) -> tuple[str, date | Duration | None] | None:
         design = None
@@ -416,6 +430,8 @@ class DetailsScraper:
                     _log.warning(
                         f"Unable to parse sub-capacity from text: {self._text!r} in"
                         f" {self._basic_data.url!r}")
+            else:
+                AGGREGATED_FIELDS[header].append(self._basic_data.url)
 
         return Stadium(
             **asdict(self._basic_data),
@@ -621,6 +637,16 @@ class _CostSubParser:
 
         _log.warning(f"Unexpected cost string: {self._text!r}")
         return None
+
+
+def dump_aggregated_fields() -> None:
+    if AGGREGATED_FIELDS:
+        timestamp = datetime.now().strftime(FILENAME_TIMESTAMP_FORMAT)
+        dest = OUTPUT_DIR / f"aggregated_fields_{timestamp}.json"
+        with dest.open("w", encoding="utf8") as f:
+            json.dump(AGGREGATED_FIELDS, f, indent=4, ensure_ascii=False)
+        if dest.exists():
+            _log.info(f"Successfully dumped '{dest}'")
 
 
 def scrape_stadiums(country=POLAND) -> Iterator[Stadium]:
