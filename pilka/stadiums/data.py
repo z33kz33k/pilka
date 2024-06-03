@@ -156,22 +156,22 @@ def get_tier(capacity: int) -> str:
         74624
     """
     tiers2steps = {
-        0: 75_000,
-        1: 50_000,
-        2: 34_000,
-        3: 23_000,
-        4: 15_550,
-        5: 10_500,
-        6: 7_100,
-        7: 4_800,
-        8: 3_250,
-        9: 2_200,
-        10: 1_500,
+        1: 75_000,
+        2: 50_000,
+        3: 34_000,
+        4: 23_000,
+        5: 15_550,
+        6: 10_500,
+        7: 7_100,
+        8: 4_800,
+        9: 3_250,
+        10: 2_200,
+        11: 1_500,
     }
     romans = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"]
-    for i in range(11):
+    for i in range(1, 12):
         if capacity >= tiers2steps[i]:
-            return romans[i]
+            return romans[i - 1]
     return "XII"
 
 
@@ -260,8 +260,6 @@ class Stadium(BasicStadium):
     @property
     def is_modern(self) -> bool:
         last_renovation = self.renovations[-1] if self.renovations else None
-        if isinstance(last_renovation, Duration):
-            last_renovation = last_renovation.end
         dates = self.design, self.construction, self.inauguration, last_renovation
         dates = [d.end if isinstance(d, Duration) else d for d in dates if d is not None]
         if not dates:
