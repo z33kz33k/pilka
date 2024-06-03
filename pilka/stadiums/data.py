@@ -37,6 +37,9 @@ _FIELD_NAMES_TO_CLASS_NAMES = {
     "capacity_details": "SubCapacity",
     "other_names": "Nickname",
     "cost": "Cost",
+    "design": "Duration",
+    "construction": "Duration",
+    "renovations": "Duration",
     "country": "Country",
     "stadiums": "Stadium"
 }
@@ -62,36 +65,27 @@ def _deserialize_substructs(data: Json) -> dict:
     return data
 
 
-def _deserialize_date(obj: Any) -> date | Any:
+def _deserialize_dates(obj: Any) -> date | Any:
+    if isinstance(obj, list):
+        for i, item in enumerate(obj):
+            obj[i] = _deserialize_dates(item)
+    if not isinstance(obj, str):
+        return obj
     try:
         return date.fromisoformat(obj)
-    except ValueError:
+    except (ValueError, TypeError):
         return obj
 
 
-def _is_duration(data: Json) -> bool:
-    if not isinstance(data, dict):
-        return False
-    for k, v in data.items():
-        if k not in ("start", "end"):
-            return False
-        if not isinstance(_deserialize_date(v), date):
-            return False
-    return True
-
-
-def _deserialize_dates_and_durations(data: Json, field: Field) -> Json:
-    if date.__name__ in str(field.type):
-        data[field.name] = _deserialize_date(data[field.name])
-    elif list.__name__ in str(field.type) and isinstance(data[field.name], list):
-        duration_cls = get_classes_in_module(__name__).get("Duration")
-        new_list = []
-        for item in data[field.name]:
-            if duration_cls and _is_duration(item):
-                new_list.append(duration_cls(**item))
-            else:
-                new_list.append(_deserialize_date(item))
-        data[field.name] = new_list
+def _process_dates(data: Json) -> Json:
+    if isinstance(data, list):
+        for i, item in enumerate(data[:]):
+            data[i] = _deserialize_dates(item)
+    elif isinstance(data, dict):
+        for k, v in data.items():
+            data[k] = _deserialize_dates(v)
+    else:
+        data = _deserialize_dates(data)
     return data
 
 
@@ -109,8 +103,7 @@ class _JsonSerializable:
         for f in fields(cls):
             if data.get(f.name) is None:
                 data[f.name] = None
-            else:
-                data = _deserialize_dates_and_durations(data, f)
+        data = _process_dates(data)
         data = _deserialize_substructs(data)
         for f in fields(cls):
             if isinstance(data.get(f.name), list):
@@ -270,7 +263,7 @@ class Stadium(BasicStadium):
         if isinstance(last_renovation, Duration):
             last_renovation = last_renovation.end
         dates = self.design, self.construction, self.inauguration, last_renovation
-        dates = [d for d in dates if d is not None]
+        dates = [d.end if isinstance(d, Duration) else d for d in dates if d is not None]
         if not dates:
             return False
         result = max(dates)
