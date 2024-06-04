@@ -317,3 +317,8 @@ class CountryStadiumsData(_JsonSerializable):
             return None
         total = sum(s.capacity for s in stadiums)
         return total / len(stadiums)
+
+    @property
+    def currency_symbols(self) -> list[str]:
+        return sorted({s.cost.currency for s in self.stadiums if s.cost is not None})
+

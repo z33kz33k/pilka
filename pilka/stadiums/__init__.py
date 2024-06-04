@@ -25,7 +25,7 @@ from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
 from pilka.stadiums.data import Cost, Country, CountryStadiumsData, Duration, League, Nickname, \
     Stadium, SubCapacity, Town, BasicStadium, POLAND
 from pilka.utils import ParsingError, extract_date, extract_float, extract_int, from_iterable, \
-    getdir, timed, clean_parenthesized, trim_suffix
+    getdir, timed, clean_parenthesized
 from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 from pilka.constants import T
 
@@ -143,13 +143,12 @@ class DetailsScraper:
 
     @staticmethod
     def _trim_multiples(text: str) -> str:
-        if ", " in text:
-            text, *_ = text.split(", ")
+        text, _, _ = text.partition(", ")
         return text
 
     @staticmethod
     def _split_parenthesized(text: str) -> tuple[str, str]:
-        first, second = text.split("(")
+        first, _, second = text.partition("(")
         second = second[:-1] if second.endswith(")") else second
         return first.strip(), second.strip()
 
@@ -164,7 +163,7 @@ class DetailsScraper:
             try:
                 text, details = cls._split_parenthesized(text)
             except ValueError:
-                text, *_ = text.split("(")
+                text, _, _ = text.partition("(")
         try:
             text = text_func(text) if text_func else text
             details = details_func(details) if details_func and details else details
@@ -199,7 +198,7 @@ class DetailsScraper:
             return None
 
     def _parse_renovations(self) -> tuple[datetime | Duration, ...] | None:
-        text = trim_suffix(self._text, ".")
+        text = self._text.removesuffix(".")
         cleaned_text = clean_parenthesized(text)
         renovations = []
         for token in cleaned_text.split(","):
@@ -238,20 +237,20 @@ class DetailsScraper:
         if not record_attendance:
             return None
         record_attendance, record_attendance_details = record_attendance
-        record_attendance_details = trim_suffix(
-            record_attendance_details, ".") if record_attendance_details else None
+        record_attendance_details = record_attendance_details.removesuffix(
+            ".") if record_attendance_details else None
         return record_attendance, record_attendance_details
 
     def _parse_inauguration(self) -> tuple[date, str | None] | None:
         text = self._text.strip()
         if ")" in text:  # trim multiples #1
-            text, *_ = text.split(")")
+            text, _, _ = text.partition(")")
             text += ")"
 
             # trim multiples #2
             if sep := from_iterable((", ", " / "), lambda s: s in text):
                 if text.index(sep) < text.index("("):
-                    text, *_ = text.split(sep)
+                    text, _, _ = text.partition(sep)
                     text = text.strip()
                     try:
                         return extract_date(text), None
@@ -270,13 +269,13 @@ class DetailsScraper:
                 inauguration, inauguration_details = inauguration
             else:
                 inauguration_details, inauguration = inauguration
-            inauguration_details = trim_suffix(
-                inauguration_details, ".") if inauguration_details else None
+            inauguration_details = inauguration_details.removesuffix(
+                ".") if inauguration_details else None
             return inauguration, inauguration_details
 
         else:  # no parentheses
             if sep := from_iterable((", ", " / "), lambda s: s in text):  # trim multiples
-                text, *_ = text.split(sep)
+                text, _, _ = text.partition(sep)
                 text = text.strip()
             try:
                 return extract_date(text), None
@@ -292,7 +291,7 @@ class DetailsScraper:
             if not designer:
                 return None
             designer, design = designer
-        designer = trim_suffix(designer, ".")
+        designer = designer.removesuffix(".")
         return designer, design
 
     def _parse_note(self, old_note: str | None) -> str | None:
@@ -300,7 +299,7 @@ class DetailsScraper:
             old_note += ", " + self._text[0].lower() + self._text[1:]
         else:
             old_note = self._text
-        return trim_suffix(old_note, ".") if old_note else None
+        return old_note.removesuffix(".") if old_note else None
 
     @staticmethod
     def _parse_sub_capacity_amount(text: str) -> int:
@@ -364,7 +363,7 @@ class DetailsScraper:
             header = row.find("th").text.strip()
             self._text = normalize(row.find("td").text.strip())
             if header in self.ROWS["address"]:
-                address = trim_suffix(self._text, ".")
+                address = self._text.removesuffix(".")
             elif header in self.ROWS["other_names"]:
                 other_names = self._parse_other_names()
                 if not other_names:
@@ -416,11 +415,11 @@ class DetailsScraper:
                     designer, new_design = designer
                     design = new_design if new_design and not design else design
             elif header in self.ROWS["structural_engineer"]:
-                structural_engineer = trim_suffix(self._text, ".")
+                structural_engineer = self._text.removesuffix(".")
             elif header in self.ROWS["contractor"]:
-                contractor = trim_suffix(clean_parenthesized(self._text), ".")
+                contractor = clean_parenthesized(self._text).removesuffix(".")
             elif header in self.ROWS["investor"]:
-                investor = trim_suffix(self._text, ".")
+                investor = self._text.removesuffix(".")
             elif header in self.ROWS["note"]:
                 note = self._parse_note(note)
             elif header in self.ROWS["track_length"]:
@@ -498,13 +497,12 @@ class _CostSubParser:
 
     @classmethod
     def _prepare_text(cls, text: str) -> str:
-        text = clean_parenthesized(text)
-        if " / " in text:
-            *_, text = text.split(" / ")
-            text = text.strip()
+        text, _, _ = text.partition("(")
+        text, _, _ = text.strip().partition(" / ")
+        text = text.strip()
         approx = from_iterable(cls.APPROXIMATORS, lambda a: text.startswith(a))
         if approx:
-            text = text[len(approx):]
+            text = text.removeprefix(approx)
         return text
 
     @classmethod
@@ -673,8 +671,8 @@ def scrape_countries() -> Iterator[Country]:
             a: Tag = li.find("a")
             if a is not None:
                 suburl = a.attrs["href"]
-                *_, country_id = suburl.split("/")
-                name, *_ = a.text.split("(")
+                _, _, country_id = suburl.rpartition("/")
+                name, _, _ = a.text.partition("(")
                 yield Country(normalize(name.strip()), country_id, confederations[idx])
 
 

@@ -316,7 +316,3 @@ def clean_parenthesized(text: str) -> str:
         pattern = r"\(.*?\)"
         text = re.sub(pattern, "", text)
     return text
-
-
-def trim_suffix(text: str, suffix="") -> str:
-    return text[:-len(suffix)] if text.endswith(suffix) else text
