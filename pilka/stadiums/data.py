@@ -7,12 +7,43 @@
     @author: z33k
 
 """
-from dataclasses import Field, asdict, dataclass, fields
+from dataclasses import asdict, dataclass, fields
 from datetime import date, timedelta
 from typing import Any, Type
 
+from currency_converter import CurrencyConverter
+
 from pilka.constants import Json, T
 from pilka.utils import get_classes_in_module, get_properties, tolist, totuple
+
+
+currency_converter = CurrencyConverter()
+CURRENCIES = {  # symbols seen in the data mapped to iso monikers
+    'A$': 'AUD',
+    'AU$': 'AUD',
+    'R$': 'BRL',
+    'Cr$': 'BRL',
+    'C$': 'CAD',
+    'RMB': 'CNY',
+    'Kč': 'CZK',
+    'Euro': 'EUR',
+    '€': 'EUR',
+    '£': 'GBP',
+    'Ł': 'GBP',
+    'Rp': 'IDR',
+    'NIS': 'ILS',
+    '¥': 'JPY',
+    '₩': 'KRW',
+    'NZ$': 'NZD',
+    '₱': 'PHP',
+    'zł': 'PLN',
+    'S$': 'SGD',
+    'TL': 'TRY',
+    'TRL': 'TRY',
+    '$': 'USD',
+    'CFA': 'XOF',
+    'R': 'ZAR'
+}
 
 
 def _serialize(data: Json) -> Json:  # recursive
@@ -210,6 +241,32 @@ class Cost(_JsonSerializable):
         if self.currency != other.currency:
             raise ValueError("Cannot add costs with different currencies")
         return Cost(amount=self.amount + other.amount, currency=self.currency)
+
+    def _get_amount_in(self, currency_iso: str) -> int | None:
+        if self.currency == currency_iso:
+            return self.amount
+        iso = CURRENCIES.get(self.currency)
+        if iso == currency_iso:
+            return self.amount
+        currency = iso or self.currency
+        if len(currency) != 3:
+            return None
+        try:
+            return int(currency_converter.convert(self.amount, currency, currency_iso))
+        except ValueError:
+            return None
+
+    @property
+    def amount_usd(self) -> int | None:
+        return self._get_amount_in("USD")
+
+    @property
+    def amount_eur(self) -> int | None:
+        return self._get_amount_in("EUR")
+
+    @property
+    def amount_pln(self) -> int | None:
+        return self._get_amount_in("PLN")
 
 
 @dataclass(frozen=True)

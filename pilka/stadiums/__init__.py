@@ -16,12 +16,13 @@ from collections import defaultdict
 from dataclasses import asdict
 from datetime import date, datetime
 from operator import itemgetter
+from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator, TypeVar
 
 from bs4 import BeautifulSoup, Tag
 
 from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
-    READABLE_TIMESTAMP_FORMAT
+    PathLike, READABLE_TIMESTAMP_FORMAT
 from pilka.stadiums.data import Cost, Country, CountryStadiumsData, Duration, League, Nickname, \
     Stadium, SubCapacity, Town, BasicStadium, POLAND
 from pilka.utils import ParsingError, extract_date, extract_float, extract_int, from_iterable, \
@@ -541,6 +542,7 @@ class _CostSubParser:
         if not result:
             return None
         currency, amount_str = result
+        currency = currency or None
         if qualifier:
             return Cost(self._get_qualified_amount(amount_str, qualifier), currency)
         try:
@@ -557,7 +559,7 @@ class _CostSubParser:
         else:
             return None
         try:
-            return Cost(extract_int(amount_str), currency)
+            return Cost(extract_int(amount_str), currency or None)
         except ValueError:
             return None
 
@@ -567,7 +569,7 @@ class _CostSubParser:
         if not result:
             return None
         currency, amount_str = result
-        return Cost(self._get_qualified_amount(amount_str, qualifier), currency)
+        return Cost(self._get_qualified_amount(amount_str, qualifier), currency or None)
 
     def _handle_two_tokens(self) -> Cost | None:
         idx, found = self._identify_qualifier(*self._tokens)
@@ -583,7 +585,7 @@ class _CostSubParser:
         else:
             currency, amount_str = self._tokens
         try:
-            return Cost(self._get_qualified_amount(amount_str, found), currency)
+            return Cost(self._get_qualified_amount(amount_str, found), currency or None)
         except ValueError:
             return None
 
@@ -592,7 +594,7 @@ class _CostSubParser:
         amount_str = "".join(amount_tokens)
         try:
             amount = extract_float(amount_str)
-            return Cost(int(amount), currency)
+            return Cost(int(amount), currency or None)
         except ValueError:
             return None
 
@@ -622,7 +624,7 @@ class _CostSubParser:
             currency, amount_str, _ = self._tokens
         else:
             return None
-        return Cost(self._get_qualified_amount(amount_str, found), currency)
+        return Cost(self._get_qualified_amount(amount_str, found), currency or None)
 
     def parse(self) -> Cost | None:
         if any(sep in self._text for sep in self.COMPOUND_SEPARATORS):
@@ -638,16 +640,6 @@ class _CostSubParser:
 
         _log.warning(f"Unexpected cost string: {self._text!r}")
         return None
-
-
-def dump_aggregated_fields() -> None:
-    if AGGREGATED_FIELDS:
-        timestamp = datetime.now().strftime(FILENAME_TIMESTAMP_FORMAT)
-        dest = OUTPUT_DIR / f"aggregated_fields_{timestamp}.json"
-        with dest.open("w", encoding="utf8") as f:
-            json.dump(AGGREGATED_FIELDS, f, indent=4, ensure_ascii=False)
-        if dest.exists():
-            _log.info(f"Successfully dumped '{dest}'")
 
 
 def scrape_stadiums(country=POLAND) -> Iterator[Stadium]:
@@ -686,6 +678,16 @@ def scrape_country_stadiums(country: Country) -> CountryStadiumsData | None:
         _log.warning(f"Nothing has been scraped for {url!r}")
         return
     return CountryStadiumsData(country, url, tuple(stadiums))
+
+
+def dump_aggregated_fields() -> None:
+    if AGGREGATED_FIELDS:
+        timestamp = datetime.now().strftime(FILENAME_TIMESTAMP_FORMAT)
+        dest = OUTPUT_DIR / f"aggregated_fields_{timestamp}.json"
+        with dest.open("w", encoding="utf8") as f:
+            json.dump(AGGREGATED_FIELDS, f, indent=4, ensure_ascii=False)
+        if dest.exists():
+            _log.info(f"Successfully dumped '{dest}'")
 
 
 @http_requests_counted("dump")
@@ -743,6 +745,23 @@ def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
             _log.info(f"Successfully dumped '{dest}'")
     except Exception as e:
         _log.critical(f"{type(e).__qualname__}: {e}:\n{traceback.format_exc()}")
+
+
+def load_stadiums(file: PathLike) -> list[CountryStadiumsData]:
+    """Load stadiums data at file path.
+
+    Path ought to point to the JSON file dumped by `dump_stadiums()`.
+
+    Args:
+        file: path to the JSON dump file
+
+    Returns:
+        list of CountryStadiumData objects
+    """
+    file = Path(file)
+    with file.open() as f:
+        raw_data = json.load(f)
+    return [CountryStadiumsData.from_json(c) for c in raw_data["countries"]]
 
 
 def stadiums_per_town(stadiums: Iterable[Stadium], towns: Iterable[Town]) -> list:
