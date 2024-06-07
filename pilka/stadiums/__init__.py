@@ -15,7 +15,7 @@ import traceback
 from collections import defaultdict
 from dataclasses import asdict
 from datetime import date, datetime
-from operator import itemgetter
+from operator import attrgetter, itemgetter
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator, TypeVar
 
@@ -690,27 +690,68 @@ def dump_aggregated_fields() -> None:
             _log.info(f"Successfully dumped '{dest}'")
 
 
+def _parse_countries(*c_specs: str, excluded: Iterable[str] = ()) -> list[Country]:
+    scraped_countries = scrape_countries()
+    if not c_specs and not excluded:
+        return sorted(scraped_countries, key=attrgetter("id"))
+
+    # maps
+    countries_by_id, countries_by_name = {}, {}
+    countries_by_conf = defaultdict(list)
+    for country in scraped_countries:
+        countries_by_id[country.id] = country
+        countries_by_name[country.name] = country
+        countries_by_conf[country.confederation].append(country)
+
+    def _get_countries(*specifiers: str) -> set[Country]:
+        result = set()
+        for spec in specifiers:
+            for c_map in (countries_by_id, countries_by_name, countries_by_conf):
+                country = c_map.get(spec)
+                if country:
+                    if isinstance(country, list):
+                        result.update(country)
+                    else:
+                        result.add(country)
+                    break
+            if not country:
+                _log.warning(f"No valid country found for: {spec!r}")
+
+        if not result:
+            raise ValueError(f"No valid country found for: {specifiers}")
+
+        return result
+
+    countries = _get_countries(*c_specs)
+
+    if not excluded:
+        return sorted(countries, key=attrgetter("id"))
+
+    excluded_countries = _get_countries(*excluded)
+
+    return sorted([c for c in countries if c not in excluded_countries], key=attrgetter("id"))
+
+
 @http_requests_counted("dump")
 @timed("dump", precision=0)
-def dump_stadiums(*countries: Country, **kwargs: Any) -> None:
+def dump_stadiums(*countries: str, **kwargs: Any) -> None:
     """Scrape stadiums data and dump it to a JSON file.
 
     Recognized optional arguments:
-        excluded: iterable of countries to be excluded from dump
+        excluded: iterable of country specifiers to be excluded from dump
         use_timestamp: whether to append a timestamp to the dumpfile's name (default: True)
         prefix: a prefix for a dumpfile's name
         filename: a complete filename for the dumpfile (renders moot other filename-concerned arguments)
         output_dir: an output directory (if not provided, defaults to OUTPUT_DIR)
 
     Args:
-        countries: variable number of country specifiers
+        countries: variable number of country specifiers (name, ID or confederation)
         kwargs: optional arguments
     """
     now = datetime.now()
-    countries = list(countries or scrape_countries())
     excluded = kwargs.get("excluded")
     excluded = set(excluded) if excluded else set()
-    countries = [c for c in countries if c not in excluded]
+    countries = _parse_countries(*countries, excluded=excluded)
     _log.info(f"Scraping {len(countries)} country(ies) started...")
     data = {
         "timestamp": now.strftime(READABLE_TIMESTAMP_FORMAT),

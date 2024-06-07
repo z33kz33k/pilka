@@ -8,24 +8,22 @@
 
 """
 import inspect
-import os
 import logging
+import os
 import re
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Callable, Iterable, Optional, Protocol, Sequence, Set, Type
 
 import langcodes
-import pandas as pd
 from contexttimer import Timer
 from langcodes import Language, tag_is_valid
 
-from pilka.constants import PathLike, T, SECONDS_IN_YEAR
+from pilka.constants import PathLike, SECONDS_IN_YEAR, T
 from pilka.utils.check_type import type_checker
-
 
 _log = logging.getLogger(__name__)
 
@@ -73,13 +71,6 @@ def timed(operation="", precision=3) -> Callable:
             return result
         return wrapper
     return decorator
-
-
-@type_checker(pd.DataFrame)
-def first_df_row_as_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Make first row of ``df`` its columns.
-    """
-    return df.rename(columns=df.iloc[0]).drop(df.index[0]).reset_index(drop=True)
 
 
 @type_checker(str)

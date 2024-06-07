@@ -1,5 +1,5 @@
 {
-    "timestamp": "2024-06-02 23:50:07",
+    "timestamp": "2024-06-08 00:16:20",
     "countries": [
         {
             "country": {
@@ -125,7 +125,7 @@
                     "capacity": 62500,
                     "address": "103-113 Marshgate Ln, Stratford, London, United Kingdom",
                     "cost": {
-                        "amount": 809000000,
+                        "amount": 486000000,
                         "currency": "£"
                     },
                     "construction": {
@@ -417,45 +417,74 @@
                     "description": "Goodison Park - stadium description\nDecision to relocate to Goodison Road was made as future development at Anfield proved unviable. In 1892 a local contractor was ordered to erect three stands - two open terraces and one covered. Complete capacity was 11,000 (two with 4,000, 3,000 under cover). Implementing the plan took less than 6 months and Everton became the first club in England to have a purpose-built football ground (just several days after the world's first - Celtic Park).\nUntil 1895 the Toffees leased the venue and were only then able to buy it, providing redevelopments just several years later. New stands came in 1906 and 1909, both double-deckered. Two more double-tiered ones came in 1926 and 1938, making the ground have two levels on all sides. Three of those stands were designed by famous Archibald Leitch.\nFirst game with floodlighting came in 1957 and since it was a derby clash against Liverpool, over 58,000 people attended it. Just a year later England's first under-soil heating system was installed here with first scoreboard following in 1971. A major challenge came in the ‘post-Hillsborough era' as three ends of the ground had terracing and needed conversion. One stand had just seats installed, another a lower tier redevelopment, while the last - southern, was simply demolished and rebuilt as a single-tiered end in 1994.\nOver the years this ground has seen more top league games than any other with Everton spending just 4 seasons outside domestic top flight. To add to that, only 6 times the club hasn't enjoyed average crowds that would put it in England's top 10. Record average came in 1963 as each game was seen by more than 51,600 people. The stadium also had its share of international fixtures, to start with 1966 World Cup, during which it even hosted a semi-final.  "
                 },
                 {
-                    "name": "Bramall Lane",
-                    "url": "http://stadiumdb.com/stadiums/eng/bramall_lane",
+                    "name": "St. Mary's Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/st_marys_stadium",
                     "country": "England",
-                    "town": "Sheffield",
+                    "town": "Southampton",
                     "clubs": [
-                        "Sheffield United"
+                        "Southampton"
                     ],
                     "league": {
                         "name": "Premier League",
                         "tier": 1
                     },
-                    "capacity": 31884,
-                    "capacity_details": [
+                    "capacity": 32384,
+                    "address": "Britannia Rd, Southampton, SO14 5FP",
+                    "other_names": [
                         {
-                            "capacity": 31,
-                            "designation": "VIP seats"
-                        },
-                        {
-                            "capacity": 28,
-                            "designation": "Press seats"
-                        },
-                        {
-                            "capacity": 3000,
-                            "designation": "Away section"
+                            "name": "The Friends Provident St Mary's Stadium",
+                            "duration": {
+                                "start": "2001-01-01",
+                                "end": "2006-01-01"
+                            }
                         }
                     ],
-                    "address": "Bramall Lane, Sheffield, S2 4SU",
-                    "record_attendance": 68287,
-                    "record_attendance_details": "Sheffield United - Leeds United 15.02.1936",
-                    "inauguration": "1855-04-30",
-                    "inauguration_details": "Sheffield United - Hallam",
-                    "renovations": [
-                        "1966-01-01",
-                        "1975-01-01",
-                        "1991-01-01",
-                        "1994-01-01",
-                        "1996-01-01",
-                        "2006-01-01"
-                    ]
+                    "floodlights_lux": 1200,
+                    "record_attendance": 32363,
+                    "record_attendance_details": "Southampton FC - Coventry City, 28.04.2012",
+                    "cost": {
+                        "amount": 32000000,
+                        "currency": "£"
+                    },
+                    "construction": {
+                        "start": "1999-12-01",
+                        "end": "2001-07-01"
+                    },
+                    "inauguration": "2001-01-01",
+                    "inauguration_details": "Southampton-Espanyol 3-4",
+                    "description": "St. Mary's Stadium - stadium description\nThe need for a new stadium became more and more apparent in 1980's when the club was among the best sides in English football, reaching for vice-championship in 1984. But before decision to relocate from The Dell was made, the old ground was converted into all-seating mode. Only then, in late 1990's it came out that the city can offer a deteriorated plot in the centre to Southampton FC. It was in a great location, just neighbouring the place of club's birth. No wonder it was named St. Mary's Stadium as it was located close to the St. Mary's church where “Saints” came from.\nConstruction works lasted from December 1999 to July 2001 and cost some Ł32 mln. The outcome are single-tiered stands encircling the pitch with accommodation for 32,689 fans. If needed, the construction can handle another tier with seating up to 50,000, but that would require dismantling the roof. It's interesting feature is having parts transparent over two stands to provide proper lighting to the pitch. Club earns from 42 skyboxes and 4 large halls, each named after a legendary player of “The Saints”."
+                },
+                {
+                    "name": "King Power Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/walkers_stadium",
+                    "country": "England",
+                    "town": "Leicester",
+                    "clubs": [
+                        "Leicester City"
+                    ],
+                    "league": {
+                        "name": "Premier League",
+                        "tier": 1
+                    },
+                    "capacity": 32261,
+                    "address": "Filbert Way, Leicester, LE2 7FL",
+                    "other_names": [
+                        {
+                            "name": "Walkers Stadium",
+                            "duration": {
+                                "start": "2002-01-01",
+                                "end": "2012-01-01"
+                            }
+                        }
+                    ],
+                    "record_attendance": 32488,
+                    "record_attendance_details": "Leicester Tigers - Bath Rugby, 01.04.2006",
+                    "construction": {
+                        "start": "2001-07-01",
+                        "end": "2002-07-01"
+                    },
+                    "inauguration": "2002-07-23",
+                    "description": "King Power Stadium - stadium description\nLeicester City player their Home games at Filbert Street for a hundred years already (from 1891), when infrastructure regulations in England started changing. The stadium, despite historical upgrades and quick renovation proved too modest for increasing interest in City games.\nConstruction of a new venue became the most likely option in mid-1990s, even 40,000 seats were mentioned initially. But in November 2002 the club presented its vision to move just meters south of the old stadium, to a single-tiered 32,000-seater.\nWork started in the summer of 2001 and the stadium was operable already within one year, in time for the 2002/03 season.\nUnfortunately, the move came in a difficult moment - sponsorship and transfer markets collapsed, while City weren't only relegated from the Premier League, but also had to bear the cost of £37 million new stadium.\nClub went into receivership and lost control of its new stadium, taken over by Teachers Insurance. The American company sold it in 2013 to King Power, Thai corporation who previously bought the club as well.\nDue to naming rights deal, the stadium had been called Walkers Stadium from 2002 to 2012, later becoming known as King Power Stadium, promoting the Asian investors. However, for many fans it's still Filbert Way, for its address and connection to the historical roots."
                 },
                 {
                     "name": "Amex Stadium",
@@ -564,6 +593,43 @@
                     "description": "City Ground - stadium description\nWhen Nottingham Forest were moving several hundred yards away from their first stadium in 1898, the club was already 33 years old. The city wasn't - it received its charter just a year earlier, which obviously called for a celebration. That is why the ground's name from the beginning was City Ground. And though it did lie within city limits, it wasn't owned by Nottingham.\nMajor revamps came in the 1960's. First in 1965 new main stand was erected, but sadly existed for only 3 years.  On August 24th 1968 a fire broke out at half time of the Forest - Leeds United fixture. Though there were over 30,000 people in attendance, thankfully there were no casualties. The club played 6 rounds at nearby Meadow Lane and, ironically, didn't win even one at the archrivals' turf. In 1967 new east stand was erected and the first game saw the highest attendance to date, with 49,946 watching Forest beat Manchester United.\nOther significant changes came with the new executive stand in 1980 and redevelopment of 1992-93, when the ground was being prepared for Euro 1996. But there were more big events than just this tournament. City Ground also hosted Heineken Cup's semifinal, several FA Cup Finals (female) and concerts. The City Ground was already the seventh venue in Nottingham Forest's history."
                 },
                 {
+                    "name": "Portman Road",
+                    "url": "http://stadiumdb.com/stadiums/eng/portman_road",
+                    "country": "England",
+                    "town": "Ipswich",
+                    "clubs": [
+                        "Ipswich Town"
+                    ],
+                    "league": {
+                        "name": "Premier League",
+                        "tier": 1
+                    },
+                    "capacity": 29673,
+                    "capacity_details": [
+                        {
+                            "capacity": 600,
+                            "designation": "VIP seats"
+                        },
+                        {
+                            "capacity": 80,
+                            "designation": "Press seats"
+                        },
+                        {
+                            "capacity": 1900,
+                            "designation": "Away section"
+                        }
+                    ],
+                    "address": "Ipswich, IP1 2DA",
+                    "floodlights_lux": 1438,
+                    "record_attendance": 38010,
+                    "record_attendance_details": "Ipswich - Leeds, 08.03.1975",
+                    "inauguration": "1884-01-01",
+                    "renovations": [
+                        "1937-01-01",
+                        "2002-01-01"
+                    ]
+                },
+                {
                     "name": "Selhurst Park",
                     "url": "http://stadiumdb.com/stadiums/eng/selhurst_park",
                     "country": "England",
@@ -621,47 +687,6 @@
                     ],
                     "designer": "Archibald Leitch",
                     "description": "Craven Cottage - stadium description\nLocated on the Thames riverside, this ground has an exceptional history to it. The name Craven Cottage derives from a residence that - supposedly - hosted a number of majestic guests, including Queen Victoria. The building standing in the place of today's central circle of the pitch was lost in a fire in May 1888. Converting the ruins and surrounding garden into a football field took 2 years. First ever game with admission fees was played in 1896. Ironically, first wooden stand accommodating some 1,000 people was raised short afterwards.\nBut the ‘real deal' came in 20th century when renown architect Archibald Leitch was on the job. In his carrier Leitch designed almost 40 of the most famous British and Irish grounds. Craven Cottage with its red-brick façade of the main stand is among the most precious monuments  of Leitch's work along with the historical Ibrox front wall.\nIn its history the stadium went through quite a few revamps, but among British stadiums, especially in top flight football, Craven Cottage has an opinion of a ‘classic'. Single-tiered stands with flat roof supported on pillars based in the audience are topped with four tall floodlight masts. There's no seating in the corners apart from the clubhouse - literally, a house. Although called simply “The Cottage” it is not to be mistaken with the historical Craven Cottage. This one is the result of an… error. Leitch, although a specialist in stadia, had apparently forgotten about players changing rooms in his initial design. Now it is used as a special suite for corporate clients who wish to watch “The Cottagers” in premium conditions.\nSummer 2019 saw the start of the redevelopment of the west stand, located on the banks of the River Thames (known as the Riverside Stand). The previous structure was replaced by a brand new, much larger, two-storey stand complete with extensive facilities. At the start of the 2022/23 season the lower tier of the new stand was opened, providing over 2,000 additional spectator seats. After its full opening, scheduled for the summer of 2023, the stadium capacity will increase from the previous 25,700 to 29,600 spectators. The new, distinctive stand has changed the look of the entire venue, which combines traditional features with modernity.\nAlthough its history dates back into the 19th century, for Fulham it was already the 9th ground (!), making the London club one of two teams with the highest number of home grounds, losing only to QPR which leads with 14. Apart from Fulham the national teams of Ireland and Australia treated this venue as ‘home away from home', playing their home fixtures there temporarily. In 1948 four games of the Olympics were played here and in 1967 a record hattrick was scored here. Jimmy O'Connor of Ireland needed only 133 seconds to score 3 goals!"
-                },
-                {
-                    "name": "Turf Moor",
-                    "url": "http://stadiumdb.com/stadiums/eng/turf_moor",
-                    "country": "England",
-                    "town": "Burnley",
-                    "clubs": [
-                        "Burnley"
-                    ],
-                    "league": {
-                        "name": "Premier League",
-                        "tier": 1
-                    },
-                    "capacity": 21944,
-                    "capacity_details": [
-                        {
-                            "capacity": 8154,
-                            "designation": "The James Hargreaves Stand"
-                        },
-                        {
-                            "capacity": 6280,
-                            "designation": "The Jimmy McIlroy Stand"
-                        },
-                        {
-                            "capacity": 4000,
-                            "designation": "The Bob Lord Stand"
-                        },
-                        {
-                            "capacity": 4112,
-                            "designation": "The Cricket Field Stand (The David Fishwick Stand)"
-                        },
-                        {
-                            "capacity": 2100,
-                            "designation": "Away section"
-                        }
-                    ],
-                    "address": "Harry Potts Way, Burnley, BB10 4BX",
-                    "record_attendance": 54775,
-                    "record_attendance_details": "Burnley - Huddersfield Town, 1924",
-                    "inauguration": "1883-02-17",
-                    "inauguration_details": "Burnley - Rawtenstall, 3-6"
                 },
                 {
                     "name": "Gtech Community Stadium",
@@ -738,47 +763,6 @@
                         "2013-01-01"
                     ],
                     "description": "Vitality Stadium - stadium description\nIn 1910 the Cooper-Dean family donated part of their lands to the local football side. Stadium built on that ground was opened the same year and received the name Dean Court, honoring the donors. That name was official until 2011 when first naming rights contract was signed, changing official naming to Seward Stadium.\nHistorical venue was equipped in its first decades in one of stands built for the British Empire Exhibition of 1924, the largest exhibition event ever with 27 million visitors. Dean Court lost its form in 2001 however, due to complete revamp. The pitch was rotated 90 degrees and moved slightly to increase distance from local housing. Three new stands were built and the open side on the South was later filled with a temporary stand. In 2005 Bournemouth sold the ground to Structadene developers and leases it since then.\nRecord attendance was set in 1957, when AFC Bournemouth matched Manchester United in the FA Cup. 28,799 people watched that game. Currently stands are all-seater sections accommodating 11,307 fans, mostly covered."
-                },
-                {
-                    "name": "Kenilworth Road",
-                    "url": "http://stadiumdb.com/stadiums/eng/kenilworth_road",
-                    "country": "England",
-                    "town": "Luton",
-                    "clubs": [
-                        "Luton Town"
-                    ],
-                    "league": {
-                        "name": "Premier League",
-                        "tier": 1
-                    },
-                    "capacity": 10073,
-                    "capacity_details": [
-                        {
-                            "capacity": 209,
-                            "designation": "Business seats"
-                        },
-                        {
-                            "capacity": 1800,
-                            "designation": "Away section"
-                        }
-                    ],
-                    "record_attendance": 30069,
-                    "record_attendance_details": "Luton Town - Blackpool, 04.03.1959",
-                    "inauguration": "1905-09-04",
-                    "inauguration_details": "Luton Town - Plymouth Argyle, 0-0",
-                    "renovations": [
-                        {
-                            "start": "1922-01-01",
-                            "end": "1923-01-01"
-                        },
-                        "1937-01-01",
-                        "1953-01-01",
-                        "1954-01-01",
-                        "1985-01-01",
-                        "1991-01-01",
-                        "2005-01-01"
-                    ],
-                    "description": "Kenilworth Road - stadium description\nLuton Town has been playing here since 1905. Now this may seem a noble history, but back in the days it was a must, because in 1905 Luton had to move from their previous gorund, which was sold on short notice by the owner. And though Luton Town aim in leaving the ground since 1955, they haven't succeeded so far. They never became any of England's top clubs, but surely they've got their achievements at Kenilsworth Rd, to name just avarage attendance of over 25,000 fans per game at peak.\nBut before crowds began flocking the ground, money had to be invested. In 1921 main stand was consumed by a fire and had to be rebuilt. The structure raised in 1923 stands until now, of course with a few revamps along the way. In 1953 a friendly against Turkish Fenerbahce inaugurated floodlights at the ground and a year after that crowds of over 25,000 were attending nearly every game. Unfortunately in further decades attendance was constantly dropping due to installing seats on all stands. In 1985 it was already an all-seater with just over 10,000 seats, as it is until now.\nAn interesting fact is the membership scheme introduced by the club in 1985. For 5 years authorities were allowing only local people into the ground, causing criticism among away travelling and the FA as well. It even resulted in the club being banned from the League Cup for 4 years until Luton finally dropped the idea."
                 },
                 {
                     "name": "Stadium of Light",
@@ -907,7 +891,7 @@
                     "record_attendance": 35000,
                     "record_attendance_details": "England - Slovakia, 11/03/2003",
                     "cost": {
-                        "amount": 26000000,
+                        "amount": 16000000,
                         "currency": "£"
                     },
                     "construction": {
@@ -924,6 +908,40 @@
                     "structural_engineer": "Ove Arup",
                     "contractor": "Taylor Woodrow Construction",
                     "description": "Riverside Stadium - stadium description\nRiverside Stadium was built in the post-Taylor-Report era, released as crucial new stadium safety guidelines in the aftermath of the Hillsborough disaster. The document outlined measures to be implemented, primarily installation of individual seats, which prompted mass conversions and expansions to meet ticket demand. With the redevelopment of century-old Ayresome Park considered unviable, Middlesbrough FC decided to relocate to a new ground.\nMiddlesbrough FC spent almost all of the 20th century at Ayresome Park, built back in mid-1903. The ground stood roughly 2.4 km (1.5 miles) south-west of the Riverside, in a housing area. This meant it wasn't possible to expand sufficiently in the post-Taylor era, beyond its closing capacity of 26,667 people. Once the club stopped using it even for training purposes, Ayresome Park was demolished in 1997 and replaced by housing.\nGeographically closer to the city's centre, the new stadium was located in an industrial area, within the largely vacant Tees docks. The deteriorated site was offered by the Teesside Development Corporation and approved by the local council. Construction began in fall of 1994 and took impressively little time, less than 9 months. Opening game against Chelsea drew over 28,000 people, which was already the highest turnout in 14 years. Demand proved high enough to prompt expansion just 3 years into the stadium's existence. Addition of corner sections brought the capacity up to roughly 35,000.\nWhile the land and necessary approvals required cooperation from both public and private entities, the stadium is owned privately by Middlesbrough FC, who also financed construction of Riverside Stadium. However, the project - being the largest new stadium opened in England post WWII - also utilised public funding for anciliary infrastructure, primarily the road network.\nAlthough the first expansion took place just 3 years after opening, in 1998, corner stands offered the same standard as the initial construction. It wasn't until 2016's return to Premier League that the stadium proved somewhat aged, following over 20 years in operation.\nThe stadium received a brand new LED floodlighting system, a new press section with improved working area for journalists, as well as wheelchair platforms to match growing push for accessibility of English stadia. The hospitality facilities were also upgraded, while the south stand received two new TV studios.\nThe north stand, along the Teesside, is referred to by fans as the New Holgate End, in honour of the famous terrace at Ayresome Park, where generations of supporters used to stand. The west side is by far the largest in terms of volume, not only comprising bulk of matchday facilities but also offering two tiers of seating rather than one.\nRiverside Stadium hasn't only been home to Middlesbrough FC games but also internationals. During reconstruction of Wembley, for example, the national team played here against Slovakia before Euro 2004, setting the stadium's attendance record."
+                },
+                {
+                    "name": "Pride Park Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/pride_park",
+                    "country": "England",
+                    "town": "Derby",
+                    "clubs": [
+                        "Derby"
+                    ],
+                    "league": {
+                        "name": "Sky Bet Championship",
+                        "tier": 2
+                    },
+                    "capacity": 33597,
+                    "address": "Pride Park Stadium, Derby, DE24 8XL",
+                    "other_names": [
+                        {
+                            "name": "iPro Stadium",
+                            "duration": {
+                                "start": "2013-01-01",
+                                "end": "2016-01-01"
+                            }
+                        }
+                    ],
+                    "record_attendance": 33597,
+                    "record_attendance_details": "England - Mexico, 25.05.2001",
+                    "cost": {
+                        "amount": 28000000,
+                        "currency": "£"
+                    },
+                    "inauguration": "1997-07-20",
+                    "inauguration_details": "Derby County - UC Sampdoria 0-1",
+                    "designer": "Miller Partnership",
+                    "description": "Pride Park Stadium - stadium description\nAs with many stadia built in Britain in the 90's, this one was the result of Hillsborough Disaster and restrictions that followed. Capacity of the Baseball Ground was decreased from over 40,000 to just 17,500 seats for safety reasons and that wasn't close to satisfying Derby County's aspirations. That's why on February 21st 1996 fans were informed that from the 1997/98 season on they will be watching “The Rams” at a new ground, located on the outskirts of Derby, in the newly created Pride Park business park.\nDesign was ready almost from the start as it's basically the one of Middlesbrough's Riverside Stadium that opened its doors in 1995. Architects of Miller Partnership have implemented over 30 alterations, but still similarities are visible just too well. It's easier to name the differences, most distinctive of which are the roof line, north-western corner filled with corporate space rather than regular seating and main stand's façade.\nConstruction was started with piling in September 1996, then followed by massive concrete- and steel -prefab mounting. Fans were able to see it thanks to a purpose-built visitors' centre that took on some 75,000 guests while in operation. After a rough winter there were delays in construction, but the fast pace allowed for workers to catch up and follow the deadlines. They had a unique motivation as this ground was the first ever to be opened by Queen Elizabeth II herself."
                 },
                 {
                     "name": "Coventry Building Society Arena",
@@ -956,74 +974,45 @@
                     "contractor": "Lang O'Rourke"
                 },
                 {
-                    "name": "St. Mary's Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/st_marys_stadium",
+                    "name": "Bramall Lane",
+                    "url": "http://stadiumdb.com/stadiums/eng/bramall_lane",
                     "country": "England",
-                    "town": "Southampton",
+                    "town": "Sheffield",
                     "clubs": [
-                        "Southampton"
+                        "Sheffield United"
                     ],
                     "league": {
                         "name": "Sky Bet Championship",
                         "tier": 2
                     },
-                    "capacity": 32384,
-                    "address": "Britannia Rd, Southampton, SO14 5FP",
-                    "other_names": [
+                    "capacity": 31884,
+                    "capacity_details": [
                         {
-                            "name": "The Friends Provident St Mary's Stadium",
-                            "duration": {
-                                "start": "2001-01-01",
-                                "end": "2006-01-01"
-                            }
+                            "capacity": 31,
+                            "designation": "VIP seats"
+                        },
+                        {
+                            "capacity": 28,
+                            "designation": "Press seats"
+                        },
+                        {
+                            "capacity": 3000,
+                            "designation": "Away section"
                         }
                     ],
-                    "floodlights_lux": 1200,
-                    "record_attendance": 32363,
-                    "record_attendance_details": "Southampton FC - Coventry City, 28.04.2012",
-                    "cost": {
-                        "amount": 32000000,
-                        "currency": "£"
-                    },
-                    "construction": {
-                        "start": "1999-12-01",
-                        "end": "2001-07-01"
-                    },
-                    "inauguration": "2001-01-01",
-                    "inauguration_details": "Southampton-Espanyol 3-4",
-                    "description": "St. Mary's Stadium - stadium description\nThe need for a new stadium became more and more apparent in 1980's when the club was among the best sides in English football, reaching for vice-championship in 1984. But before decision to relocate from The Dell was made, the old ground was converted into all-seating mode. Only then, in late 1990's it came out that the city can offer a deteriorated plot in the centre to Southampton FC. It was in a great location, just neighbouring the place of club's birth. No wonder it was named St. Mary's Stadium as it was located close to the St. Mary's church where “Saints” came from.\nConstruction works lasted from December 1999 to July 2001 and cost some Ł32 mln. The outcome are single-tiered stands encircling the pitch with accommodation for 32,689 fans. If needed, the construction can handle another tier with seating up to 50,000, but that would require dismantling the roof. It's interesting feature is having parts transparent over two stands to provide proper lighting to the pitch. Club earns from 42 skyboxes and 4 large halls, each named after a legendary player of “The Saints”."
-                },
-                {
-                    "name": "King Power Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/walkers_stadium",
-                    "country": "England",
-                    "town": "Leicester",
-                    "clubs": [
-                        "Leicester City"
-                    ],
-                    "league": {
-                        "name": "Sky Bet Championship",
-                        "tier": 2
-                    },
-                    "capacity": 32261,
-                    "address": "Filbert Way, Leicester, LE2 7FL",
-                    "other_names": [
-                        {
-                            "name": "Walkers Stadium",
-                            "duration": {
-                                "start": "2002-01-01",
-                                "end": "2012-01-01"
-                            }
-                        }
-                    ],
-                    "record_attendance": 32488,
-                    "record_attendance_details": "Leicester Tigers - Bath Rugby, 01.04.2006",
-                    "construction": {
-                        "start": "2001-07-01",
-                        "end": "2002-07-01"
-                    },
-                    "inauguration": "2002-07-23",
-                    "description": "King Power Stadium - stadium description\nLeicester City player their Home games at Filbert Street for a hundred years already (from 1891), when infrastructure regulations in England started changing. The stadium, despite historical upgrades and quick renovation proved too modest for increasing interest in City games.\nConstruction of a new venue became the most likely option in mid-1990s, even 40,000 seats were mentioned initially. But in November 2002 the club presented its vision to move just meters south of the old stadium, to a single-tiered 32,000-seater.\nWork started in the summer of 2001 and the stadium was operable already within one year, in time for the 2002/03 season.\nUnfortunately, the move came in a difficult moment - sponsorship and transfer markets collapsed, while City weren't only relegated from the Premier League, but also had to bear the cost of £37 million new stadium.\nClub went into receivership and lost control of its new stadium, taken over by Teachers Insurance. The American company sold it in 2013 to King Power, Thai corporation who previously bought the club as well.\nDue to naming rights deal, the stadium had been called Walkers Stadium from 2002 to 2012, later becoming known as King Power Stadium, promoting the Asian investors. However, for many fans it's still Filbert Way, for its address and connection to the historical roots."
+                    "address": "Bramall Lane, Sheffield, S2 4SU",
+                    "record_attendance": 68287,
+                    "record_attendance_details": "Sheffield United - Leeds United 15.02.1936",
+                    "inauguration": "1855-04-30",
+                    "inauguration_details": "Sheffield United - Hallam",
+                    "renovations": [
+                        "1966-01-01",
+                        "1975-01-01",
+                        "1991-01-01",
+                        "1994-01-01",
+                        "1996-01-01",
+                        "2006-01-01"
+                    ]
                 },
                 {
                     "name": "Ewood Park",
@@ -1092,70 +1081,6 @@
                     },
                     "inauguration": "1997-08-27",
                     "description": "bet365 Stadium - stadium description\nDecision to leave the century-old Victoria Ground was made in 1994 as the old venue couldn't meet requirements set after Taylor Report. New design and location in a rather remote area were approved in 1996 and in late Autumn of that year construction works started. As the venue is based on a prefab steel frame, it only took several months to erect it.\nConstruction had cost £14.7 million with funding coming from the club, city of Stoke-on-Trent and the Football Trust. Mixed ownership with both SCFC and municipal authorities changed in 2007, when the club bought all shares of other holders, becoming sole owner.\nOpening was done by Sir Stanley Matthews, club's biggest legend. He also received a monument next to the stadium that shows him in various stages of his career. When Matthews died in 2000, his ashes were buried under the central point of the pitch.\nIn 2012 Stoke City announced plans to build a new section in south-eastern corner, originally room for giant screen. This move is expected to raise capacity above the 30,000 mark."
-                },
-                {
-                    "name": "Portman Road",
-                    "url": "http://stadiumdb.com/stadiums/eng/portman_road",
-                    "country": "England",
-                    "town": "Ipswich",
-                    "clubs": [
-                        "Ipswich Town"
-                    ],
-                    "league": {
-                        "name": "Sky Bet Championship",
-                        "tier": 2
-                    },
-                    "capacity": 29673,
-                    "capacity_details": [
-                        {
-                            "capacity": 600,
-                            "designation": "VIP seats"
-                        },
-                        {
-                            "capacity": 80,
-                            "designation": "Press seats"
-                        },
-                        {
-                            "capacity": 1900,
-                            "designation": "Away section"
-                        }
-                    ],
-                    "address": "Ipswich, IP1 2DA",
-                    "floodlights_lux": 1438,
-                    "record_attendance": 38010,
-                    "record_attendance_details": "Ipswich - Leeds, 08.03.1975",
-                    "inauguration": "1884-01-01",
-                    "renovations": [
-                        "1937-01-01",
-                        "2002-01-01"
-                    ]
-                },
-                {
-                    "name": "St. Andrew's Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/st_andrews_stadium",
-                    "country": "England",
-                    "town": "Birmingham",
-                    "clubs": [
-                        "Birmingham City"
-                    ],
-                    "league": {
-                        "name": "Sky Bet Championship",
-                        "tier": 2
-                    },
-                    "capacity": 29409,
-                    "address": "St Andrews Ground, Birmingham B9 4NH",
-                    "record_attendance": 66844,
-                    "record_attendance_details": "Birmingham City - Everton, 11.02.1939",
-                    "inauguration": "1906-01-01",
-                    "renovations": [
-                        "1956-01-01",
-                        "1958-01-01",
-                        {
-                            "start": "1993-01-01",
-                            "end": "1999-01-01"
-                        }
-                    ],
-                    "description": "St. Andrew's Stadium - stadium description\nThe ground was built by club's initiative app. 1 km from the previous stadium that was impossible to expand. In 1906 four stands were erected in the Bordesley district, one of which was covered and equipped with benches, remaining ones terracing. It could accommodate over 60,000 people and record attendance was set in 1939 FA Cup game against Everton.\nSoon the venue suffered damage during WWII German bombings and a fire that took place in similar time. In 1950's several renovations took place with floodlights being set in 1956, giant screen mounted in following years, just like roof over The Kop. A new main grandstand was also built.\nFollowing decades brought little changes though, which caused the standard to fall dramatically. In 1980's only two thirds of the light bulbs were working and construction was very week. Critical moment came on May 11th 1985, when riot caused a wall to fall, killing a boy. Soon a huge shift took place nationwide after disasters prompting regulation changes and the stadium had to be rebuilt. This however could not happen until 1993 when the club, then in administration, was bought by new owners. From 1993 to 1999 three stands were built from scratch and the only remaining one, the main grandstand, had a facelift."
                 },
                 {
                     "name": "Carrow Road",
@@ -1307,58 +1232,6 @@
                     "description": "MKM Stadium - stadium description\nThe idea to build a new stadium came about in 1997, when existing Boothferry Park was fund well below stricter standards of ‘post-Taylor' reform. However, insufficient funding initially blocked the development.\nThorough analysis of several plots in the city and outside Hull ended with West Park being selected. The place is both near city centre and in a fair distance from homes, not deteriorating residents' comfort on matchdays.\nPlanning and design were done by Arup Sport and Miller Partnership - both companies renowned for their other English stadium work. Single-tiered bowl (topped by a second tier only on the west side) were to accommodate between 25 and 30,000 people. Though capacity was finally left at 25,000, possibility to expand by adding another tier to the east still remains. 28 skyboxes are included in capacity, all located between tiers of the main stand.\nStadium is owned by the municipality as it provided £42 out of £44 million. This was possible when Hull sold their shares in Kingston Communications, stadium name sponsor. Despite some difficulties along the way, construction ended within expected budget and schedule (14 months).\nSelected colours have a meaning - seats in black-white-amber are to fit two tenant clubs: Hull City (black-amber) and rugby team Hull FC (black-white). Meanwhile external towers in blue-gold colours resemble Hull's municipal crest.\nBoth football and rugby sides provide week-to-week use for the ground nowadays, though City are said to be analyzing a possible move due to inability to buy the stadium from the municipality. National teams in both disciplines also play some fixtures here, though the stadium isn't of major importance nationwide. Summer concerts bring stars every year, with the likes of Elton John, Bon Jovi or R.E.M. playing."
                 },
                 {
-                    "name": "John Smith's Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/galpharm_stadium",
-                    "country": "England",
-                    "town": "Huddersfield",
-                    "clubs": [
-                        "Huddersfield Town"
-                    ],
-                    "league": {
-                        "name": "Sky Bet Championship",
-                        "tier": 2
-                    },
-                    "capacity": 24121,
-                    "capacity_details": [
-                        {
-                            "capacity": 4054,
-                            "designation": "Away section"
-                        }
-                    ],
-                    "address": "Stadium Way, Huddersfield, HD1 6PX England",
-                    "other_names": [
-                        "Kirklees Stadium",
-                        {
-                            "name": "Alfred McAlpine Stadium",
-                            "duration": {
-                                "start": "1994-01-01",
-                                "end": "2004-01-01"
-                            }
-                        },
-                        {
-                            "name": "Galpharm Stadium",
-                            "duration": {
-                                "start": "2004-01-01",
-                                "end": "2012-01-01"
-                            }
-                        }
-                    ],
-                    "record_attendance": 23678,
-                    "record_attendance_details": "Huddersfield Town - Liverpool FC, 1999",
-                    "cost": {
-                        "amount": 40000000,
-                        "currency": "£"
-                    },
-                    "construction": {
-                        "start": "1993-01-01",
-                        "end": "1998-01-01"
-                    },
-                    "inauguration": "1994-01-01",
-                    "designer": "Populous",
-                    "contractor": "Alfred McAlpine",
-                    "description": "John Smith's Stadium - stadium description\nDecision to build a new stadium in Huddersfield was made in 1992. HOK Sport (later Populous) architects were the ones on the job, while renowned Albert McAlpine took care of construction, letar becoming the first naming rights holder.\nWorks started in 1993 and opening took place in mid-1994. Interestingly, only two stands were fully operable at that time, with the stadium being completed as late as 1998.\nIts distinctive roof structure based on steel beams supported in the corners may seem symmetrical, but this is only an illusion. In fact, each stand is different. West and north ones have two tiers (with 26 and 16 skyboxes, respectively), with western one also being the tallest stand. It has temporary lower tier seating, allowing for concert stages to be set up. East and south sides are single-tiered, backed on the land slope. South one is the one away followings are allocated at.\nUpon completion it was thought to be among the most innovative stadiums in England, receiving RIBA Building of the Year in 1995. Ownership is split 60/40 by owner of both clubs playing here (one of them a rugby side) and the local council."
-                },
-                {
                     "name": "Deepdale Stadium",
                     "url": "http://stadiumdb.com/stadiums/eng/deepdale_stadium",
                     "country": "England",
@@ -1434,6 +1307,83 @@
                             "end": "2014-01-01"
                         }
                     ]
+                },
+                {
+                    "name": "Turf Moor",
+                    "url": "http://stadiumdb.com/stadiums/eng/turf_moor",
+                    "country": "England",
+                    "town": "Burnley",
+                    "clubs": [
+                        "Burnley"
+                    ],
+                    "league": {
+                        "name": "Sky Bet Championship",
+                        "tier": 2
+                    },
+                    "capacity": 21944,
+                    "capacity_details": [
+                        {
+                            "capacity": 8154,
+                            "designation": "The James Hargreaves Stand"
+                        },
+                        {
+                            "capacity": 6280,
+                            "designation": "The Jimmy McIlroy Stand"
+                        },
+                        {
+                            "capacity": 4000,
+                            "designation": "The Bob Lord Stand"
+                        },
+                        {
+                            "capacity": 4112,
+                            "designation": "The Cricket Field Stand (The David Fishwick Stand)"
+                        },
+                        {
+                            "capacity": 2100,
+                            "designation": "Away section"
+                        }
+                    ],
+                    "address": "Harry Potts Way, Burnley, BB10 4BX",
+                    "record_attendance": 54775,
+                    "record_attendance_details": "Burnley - Huddersfield Town, 1924",
+                    "inauguration": "1883-02-17",
+                    "inauguration_details": "Burnley - Rawtenstall, 3-6"
+                },
+                {
+                    "name": "Fratton Park",
+                    "url": "http://stadiumdb.com/stadiums/eng/fratton_park",
+                    "country": "England",
+                    "town": "Portsmouth",
+                    "clubs": [
+                        "Portsmouth"
+                    ],
+                    "league": {
+                        "name": "Sky Bet Championship",
+                        "tier": 2
+                    },
+                    "capacity": 19669,
+                    "capacity_details": [
+                        {
+                            "capacity": 2000,
+                            "designation": "Away section"
+                        }
+                    ],
+                    "address": "Frogmore Road, Portsmouth, PO4 8RA",
+                    "record_attendance": 51385,
+                    "record_attendance_details": "Portsmouth - Derby County, 26.02.1949",
+                    "inauguration": "1898-01-01",
+                    "inauguration_details": "Portsmouth - Southampton FC, 2-0",
+                    "renovations": [
+                        "1956-01-01",
+                        "1962-01-01",
+                        "2007-01-01",
+                        {
+                            "start": "2010-01-01",
+                            "end": "2011-01-01"
+                        },
+                        "2019-01-01"
+                    ],
+                    "description": "Fratton Park - stadium description\nBuilt in 1898, the venue was among the more distinctive stadiums in the UK, partly thanks to the part played by the ever famous Archibald Leitch, who was among the architects. The main administration building has a mock Tudor appearance and was accompanied by another building with a clock tower. These however have been dismantled with only the small cottage-alike part left to this day.\nThanks to its fame and standard it was home to its first (and, as it later turned out, only) England international game already in 1903. Several decades later the 1948 Olympic tournament was co-hosted by Fratton Park which was one of only two outside-of-London stadiums to be chosen. In 1956 it was the first Football League ground with floodlights (Feb 22nd, against Newcastle United).\nBut, just so that it doesn't sound all too modern, in 2007 it was the last venue in the Premier League to have an uncovered stand. It wasn't until 2019 that the building's iconic floodlight masts disappeared, with new lighting being installed within the roof.\nToday's stadium consists of four independent stands, without any filling sections in the corners. Two parts along the sides are double-tiered while those behind goals have just one tier. Due to low capacity and poor infrastructure the club was seeking options to upgrade the ground or move to a new one, but so far - without success."
                 },
                 {
                     "name": "The Den",
@@ -1532,76 +1482,90 @@
                     "description": "Home Park - stadium description\nThe venue was built in 1893 and for the first five years main tenants were rugby side Albion who moved out in 1898. Three years was the ground left unused until Argyle club became host to sporting events - initially in athletics, but soon football became the most important discipline. Back then the ground consisted of one wooden grandstand for some 2,000 people and tailings on remaining three sides.\nFirst major revamp came in 1920 when the club advanced to Premier League and main stand was replaced by a covered concrete structure. So were the remaining sections, however they were transformed into uncovered terracing. New infrastructure for players and officials was also created, largely funded by supporters association. Following years saw the club draw large crowds with average around 20,000 in 1930's and record attendance reached in 1936's game against Aston Villa.\nWWII bombings that hit Plymouth in 1941 due to its military base status haven't spared the stadium. Main stand was almost destroyed and repaired after the conflict ended in 1945. It was later replaced by a two-tiered stand by Archibald Leitch (1952, along with floodlights), one of his last works. Until mid-80's remaining stands were receiving cover.\nPlans to build a completely new venue were drawn in 2001 with three stands being replaced that same year as part of first phase. Main grandstand was supposed to be next, but it hasn't happened to date. In 2011 the club went into administration and municipality took over the ground."
                 },
                 {
-                    "name": "AESSEAL New York Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/new_york_stadium",
+                    "name": "Kassam Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/kassam_stadium",
                     "country": "England",
-                    "town": "Rotherham",
+                    "town": "Oxford",
                     "clubs": [
-                        "Rotherham United FC"
+                        "Oxford United"
                     ],
                     "league": {
                         "name": "Sky Bet Championship",
                         "tier": 2
                     },
-                    "capacity": 12088,
+                    "capacity": 12500,
+                    "address": "Grenoble Road, Oxford, OX4 4XP",
+                    "record_attendance": 12177,
+                    "record_attendance_details": "Oxford - Aston Villa, 06.11.2002",
+                    "inauguration": "2001-01-01"
+                },
+                {
+                    "name": "Kenilworth Road",
+                    "url": "http://stadiumdb.com/stadiums/eng/kenilworth_road",
+                    "country": "England",
+                    "town": "Luton",
+                    "clubs": [
+                        "Luton Town"
+                    ],
+                    "league": {
+                        "name": "Sky Bet Championship",
+                        "tier": 2
+                    },
+                    "capacity": 12000,
                     "capacity_details": [
                         {
-                            "capacity": 2000,
+                            "capacity": 209,
+                            "designation": "Business seats"
+                        },
+                        {
+                            "capacity": 1800,
                             "designation": "Away section"
                         }
                     ],
-                    "address": "New York Way, Rotherham, S60 1AH",
-                    "cost": {
-                        "amount": 25000000,
-                        "currency": "£"
-                    },
-                    "design": {
-                        "start": "2010-01-01",
-                        "end": "2011-01-01"
-                    },
-                    "construction": {
-                        "start": "2011-06-16",
-                        "end": "2012-07-19"
-                    },
-                    "inauguration": "2012-07-21",
-                    "inauguration_details": "Rotherham United - Barnsley, 2-1",
-                    "designer": "S+P Architects",
-                    "contractor": "GMI Construction Group",
-                    "description": "AESSEAL New York Stadium - stadium description\nName may lead you to thinking it has something to do with the Big Apple in United States. And not without a reason - the ground stands where a foundry responsible for iconic NY City hydrants used to be. But more simply new stadium is just called after the neighbourhood it was built in.\nAlthough construction took just over one year, plans were in place much earlier. Rotherham United didn't come to an agreement with their previous ground's owner and had to seek for an alternative. Temporary stay at the Don Valley Stadium was no solution in the long term, so the idea of new community stadium was brought forward. Design drawn in 2010, plot bought the same year, construction started in June 2011. By mid-July 2012 the stadium was ready for opening.\nIt took £25 million to build the 12,000-seat stands that encircle the pitch, but it's not just that. New York Stadium is also the biggest conference centre locally with capacity of up to 700 people for single events. It's also located very comfortably within walking distance from the centre, close to railway station and bus interchange, also with decent car capacity.\nThe visual side was done by S+P Architects. Along with their vision the bowl grows proportionally from south-east to north-west, ending with the dominating main grandstand. The seating is all in one tier, apart of course from the skyboxes and suites.  "
+                    "record_attendance": 30069,
+                    "record_attendance_details": "Luton Town - Blackpool, 04.03.1959",
+                    "inauguration": "1905-09-04",
+                    "inauguration_details": "Luton Town - Plymouth Argyle, 0-0",
+                    "renovations": [
+                        {
+                            "start": "1922-01-01",
+                            "end": "1923-01-01"
+                        },
+                        "1937-01-01",
+                        "1953-01-01",
+                        "1954-01-01",
+                        "1985-01-01",
+                        "1991-01-01",
+                        "2005-01-01"
+                    ],
+                    "description": "Kenilworth Road - stadium description\nLuton Town has been playing here since 1905. Now this may seem a noble history, but back in the days it was a must, because in 1905 Luton had to move from their previous gorund, which was sold on short notice by the owner. And though Luton Town aim in leaving the ground since 1955, they haven't succeeded so far. They never became any of England's top clubs, but surely they've got their achievements at Kenilsworth Rd, to name just avarage attendance of over 25,000 fans per game at peak.\nBut before crowds began flocking the ground, money had to be invested. In 1921 main stand was consumed by a fire and had to be rebuilt. The structure raised in 1923 stands until now, of course with a few revamps along the way. In 1953 a friendly against Turkish Fenerbahce inaugurated floodlights at the ground and a year after that crowds of over 25,000 were attending nearly every game. Unfortunately in further decades attendance was constantly dropping due to installing seats on all stands. In 1985 it was already an all-seater with just over 10,000 seats.\nAn interesting fact is the membership scheme introduced by the club in 1985. For 5 years authorities were allowing only local people into the ground, causing criticism among away travelling and the FA as well. It even resulted in the club being banned from the League Cup for 4 years until Luton finally dropped the idea."
                 },
                 {
-                    "name": "Pride Park Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/pride_park",
+                    "name": "St. Andrew's Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/st_andrews_stadium",
                     "country": "England",
-                    "town": "Derby",
+                    "town": "Birmingham",
                     "clubs": [
-                        "Derby"
+                        "Birmingham City"
                     ],
                     "league": {
                         "name": "Sky Bet League One",
                         "tier": 3
                     },
-                    "capacity": 33597,
-                    "address": "Pride Park Stadium, Derby, DE24 8XL",
-                    "other_names": [
+                    "capacity": 29409,
+                    "address": "St Andrews Ground, Birmingham B9 4NH",
+                    "record_attendance": 66844,
+                    "record_attendance_details": "Birmingham City - Everton, 11.02.1939",
+                    "inauguration": "1906-01-01",
+                    "renovations": [
+                        "1956-01-01",
+                        "1958-01-01",
                         {
-                            "name": "iPro Stadium",
-                            "duration": {
-                                "start": "2013-01-01",
-                                "end": "2016-01-01"
-                            }
+                            "start": "1993-01-01",
+                            "end": "1999-01-01"
                         }
                     ],
-                    "record_attendance": 33597,
-                    "record_attendance_details": "England - Mexico, 25.05.2001",
-                    "cost": {
-                        "amount": 28000000,
-                        "currency": "£"
-                    },
-                    "inauguration": "1997-07-20",
-                    "inauguration_details": "Derby County - UC Sampdoria 0-1",
-                    "designer": "Miller Partnership",
-                    "description": "Pride Park Stadium - stadium description\nAs with many stadia built in Britain in the 90's, this one was the result of Hillsborough Disaster and restrictions that followed. Capacity of the Baseball Ground was decreased from over 40,000 to just 17,500 seats for safety reasons and that wasn't close to satisfying Derby County's aspirations. That's why on February 21st 1996 fans were informed that from the 1997/98 season on they will be watching “The Rams” at a new ground, located on the outskirts of Derby, in the newly created Pride Park business park.\nDesign was ready almost from the start as it's basically the one of Middlesbrough's Riverside Stadium that opened its doors in 1995. Architects of Miller Partnership have implemented over 30 alterations, but still similarities are visible just too well. It's easier to name the differences, most distinctive of which are the roof line, north-western corner filled with corporate space rather than regular seating and main stand's façade.\nConstruction was started with piling in September 1996, then followed by massive concrete- and steel -prefab mounting. Fans were able to see it thanks to a purpose-built visitors' centre that took on some 75,000 guests while in operation. After a rough winter there were delays in construction, but the fast pace allowed for workers to catch up and follow the deadlines. They had a unique motivation as this ground was the first ever to be opened by Queen Elizabeth II herself."
+                    "description": "St. Andrew's Stadium - stadium description\nThe ground was built by club's initiative app. 1 km from the previous stadium that was impossible to expand. In 1906 four stands were erected in the Bordesley district, one of which was covered and equipped with benches, remaining ones terracing. It could accommodate over 60,000 people and record attendance was set in 1939 FA Cup game against Everton.\nSoon the venue suffered damage during WWII German bombings and a fire that took place in similar time. In 1950's several renovations took place with floodlights being set in 1956, giant screen mounted in following years, just like roof over The Kop. A new main grandstand was also built.\nFollowing decades brought little changes though, which caused the standard to fall dramatically. In 1980's only two thirds of the light bulbs were working and construction was very week. Critical moment came on May 11th 1985, when riot caused a wall to fall, killing a boy. Soon a huge shift took place nationwide after disasters prompting regulation changes and the stadium had to be rebuilt. This however could not happen until 1993 when the club, then in administration, was bought by new owners. From 1993 to 1999 three stands were built from scratch and the only remaining one, the main grandstand, had a facelift."
                 },
                 {
                     "name": "Toughsheet Community Stadium",
@@ -1758,6 +1722,58 @@
                     "description": "Select Car Leasing Stadium - stadium description\nThe stadium was built in 1998 after the previous ground at Elm Park was judged as unsuitable for redevelopment. The erection cost over Ł50 million and the result are stands encircling the pitch. Three of the have single tiers, while the main grandstand on the West side is divided into two levels of regular seats. Between these skyboxes were constructed and on the outside the Millennium Madejski Hotel was built, connected to the ground.\nOfficial name derives from club's president sir John Madejski who is responsible for Reading FC getting a new ground. And though the rugby side London Irish are also tenants of the stadium, the football club's needs always come first. When the club was playing its sole Premier League season to date, it was sold out almost all the time. An idea to increase capacity to 36,900 seats came up and soon earned planning permission. However due to relegation and decreased interest of fans plans were put on hold."
                 },
                 {
+                    "name": "John Smith's Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/galpharm_stadium",
+                    "country": "England",
+                    "town": "Huddersfield",
+                    "clubs": [
+                        "Huddersfield Town"
+                    ],
+                    "league": {
+                        "name": "Sky Bet League One",
+                        "tier": 3
+                    },
+                    "capacity": 24121,
+                    "capacity_details": [
+                        {
+                            "capacity": 4054,
+                            "designation": "Away section"
+                        }
+                    ],
+                    "address": "Stadium Way, Huddersfield, HD1 6PX England",
+                    "other_names": [
+                        "Kirklees Stadium",
+                        {
+                            "name": "Alfred McAlpine Stadium",
+                            "duration": {
+                                "start": "1994-01-01",
+                                "end": "2004-01-01"
+                            }
+                        },
+                        {
+                            "name": "Galpharm Stadium",
+                            "duration": {
+                                "start": "2004-01-01",
+                                "end": "2012-01-01"
+                            }
+                        }
+                    ],
+                    "record_attendance": 23678,
+                    "record_attendance_details": "Huddersfield Town - Liverpool FC, 1999",
+                    "cost": {
+                        "amount": 40000000,
+                        "currency": "£"
+                    },
+                    "construction": {
+                        "start": "1993-01-01",
+                        "end": "1998-01-01"
+                    },
+                    "inauguration": "1994-01-01",
+                    "designer": "Populous",
+                    "contractor": "Alfred McAlpine",
+                    "description": "John Smith's Stadium - stadium description\nDecision to build a new stadium in Huddersfield was made in 1992. HOK Sport (later Populous) architects were the ones on the job, while renowned Albert McAlpine took care of construction, letar becoming the first naming rights holder.\nWorks started in 1993 and opening took place in mid-1994. Interestingly, only two stands were fully operable at that time, with the stadium being completed as late as 1998.\nIts distinctive roof structure based on steel beams supported in the corners may seem symmetrical, but this is only an illusion. In fact, each stand is different. West and north ones have two tiers (with 26 and 16 skyboxes, respectively), with western one also being the tallest stand. It has temporary lower tier seating, allowing for concert stages to be set up. East and south sides are single-tiered, backed on the land slope. South one is the one away followings are allocated at.\nUpon completion it was thought to be among the most innovative stadiums in England, receiving RIBA Building of the Year in 1995. Ownership is split 60/40 by owner of both clubs playing here (one of them a rugby side) and the local council."
+                },
+                {
                     "name": "Oakwell Stadium",
                     "url": "http://stadiumdb.com/stadiums/eng/oakwell_stadium",
                     "country": "England",
@@ -1778,61 +1794,6 @@
                     "renovations": [
                         "1999-01-01"
                     ]
-                },
-                {
-                    "name": "Fratton Park",
-                    "url": "http://stadiumdb.com/stadiums/eng/fratton_park",
-                    "country": "England",
-                    "town": "Portsmouth",
-                    "clubs": [
-                        "Portsmouth"
-                    ],
-                    "league": {
-                        "name": "Sky Bet League One",
-                        "tier": 3
-                    },
-                    "capacity": 19669,
-                    "capacity_details": [
-                        {
-                            "capacity": 2000,
-                            "designation": "Away section"
-                        }
-                    ],
-                    "address": "Frogmore Road, Portsmouth, PO4 8RA",
-                    "record_attendance": 51385,
-                    "record_attendance_details": "Portsmouth - Derby County, 26.02.1949",
-                    "inauguration": "1898-01-01",
-                    "inauguration_details": "Portsmouth - Southampton FC, 2-0",
-                    "renovations": [
-                        "1956-01-01",
-                        "1962-01-01",
-                        "2007-01-01",
-                        {
-                            "start": "2010-01-01",
-                            "end": "2011-01-01"
-                        },
-                        "2019-01-01"
-                    ],
-                    "description": "Fratton Park - stadium description\nBuilt in 1898, the venue was among the more distinctive stadiums in the UK, partly thanks to the part played by the ever famous Archibald Leitch, who was among the architects. The main administration building has a mock Tudor appearance and was accompanied by another building with a clock tower. These however have been dismantled with only the small cottage-alike part left to this day.\nThanks to its fame and standard it was home to its first (and, as it later turned out, only) England international game already in 1903. Several decades later the 1948 Olympic tournament was co-hosted by Fratton Park which was one of only two outside-of-London stadiums to be chosen. In 1956 it was the first Football League ground with floodlights (Feb 22nd, against Newcastle United).\nBut, just so that it doesn't sound all too modern, in 2007 it was the last venue in the Premier League to have an uncovered stand. It wasn't until 2019 that the building's iconic floodlight masts disappeared, with new lighting being installed within the roof.\nToday's stadium consists of four independent stands, without any filling sections in the corners. Two parts along the sides are double-tiered while those behind goals have just one tier. Due to low capacity and poor infrastructure the club was seeking options to upgrade the ground or move to a new one, but so far - without success."
-                },
-                {
-                    "name": "Brunton Park",
-                    "url": "http://stadiumdb.com/stadiums/eng/brunton_park",
-                    "country": "England",
-                    "town": "Carlisle",
-                    "clubs": [
-                        "United"
-                    ],
-                    "league": {
-                        "name": "Sky Bet League One",
-                        "tier": 3
-                    },
-                    "capacity": 17949,
-                    "address": "Carlisle United FC, Brunton Park, Warwick Road, Carlisle, CA1 1LL",
-                    "record_attendance": 27500,
-                    "record_attendance_details": "Carlisle United - Birmingham City, 05.01.1957",
-                    "inauguration": "1909-08-02",
-                    "inauguration_details": "Carlisle United - Newcastle United"
                 },
                 {
                     "name": "Bloomfield Road",
@@ -1857,40 +1818,6 @@
                             "end": "2010-01-01"
                         }
                     ]
-                },
-                {
-                    "name": "Vale Park",
-                    "url": "http://stadiumdb.com/stadiums/eng/vale_park",
-                    "country": "England",
-                    "town": "Stoke-on-Trent",
-                    "clubs": [
-                        "Port Vale"
-                    ],
-                    "league": {
-                        "name": "Sky Bet League One",
-                        "tier": 3
-                    },
-                    "capacity": 15036,
-                    "address": "Vale Park, Hamil Road, Burslem, Stoke-on-Trent, Staffordshire, ST6 1AW",
-                    "record_attendance": 49768,
-                    "record_attendance_details": "Port Vale - Aston Villa, 1960",
-                    "construction": {
-                        "start": "1944-01-01",
-                        "end": "1950-01-01"
-                    },
-                    "inauguration": "1950-08-24",
-                    "inauguration_details": "Port Vale - Newport County, 1-0",
-                    "renovations": [
-                        "1954-01-01",
-                        "1956-01-01",
-                        "1959-01-01",
-                        "1988-01-01",
-                        "1989-01-01",
-                        "1992-01-01",
-                        "1995-01-01",
-                        "2000-01-01"
-                    ],
-                    "description": "Vale Park - stadium description\nThough it may seem hard to believe, this was supposed to be ‘Wembley of the North', with 80,000 capacity and 1,000-car parking space around it. However reality proved these plans were too ambitious for a third-league side. That didn't stop Port Vale overall, just forced a decrease in plans.\nNew stadium had to get built as the club lost tenancy at its previous ground. Decision was made to build in a former clay pit next to Burslem Park where Vale started their history.\nConstruction took long 5 years and resulted in 40,000 capacity (though only 360 seated)Stands were erected alongside the pitch, while end zones were land slopes. Before first decade of existence ended, size went up to 50,000 people (in 1954, 1,000 seated) and floodlights were installed (1958).\nIn mid-1980s problem appeared as capacity fell to just over 16,000 for safety reasons. Late 1980s saw hundreds of thousands spent on floodlight improvements, scoreboard and spectator facilities, like first of its kind in the UK disabled section. But these efforts didn't solve size problems, inspectors again cut capacity, to 12,000.\nNo wonder intensive works started in early 1990s to convert the ground into an all-seater and last game with terraces took place in late 1998. Right after this construction of a new eastern stand began. Interestingly, it hasn't been finished to date."
                 },
                 {
                     "name": "Weston Homes Stadium",
@@ -1932,22 +1859,77 @@
                     "description": "Weston Homes Stadium - stadium description\nThe venue was erected in 1913, but it wasn't even close to being called ‘venue'  with just one wooden stand for 250 people. When Peterborough United were moving in around 1934, a new building with dressing rooms was added in the background of the stand. It lasted until major revamps came in 1950's.\nIn 1942 United were close to losing their tenancy as they owed money, but two individuals came in and saved the day by paying off the debt. Soon afterwards new terracing was built behind goals. A decade later the club was stable enough to buy the ground back and redevelop it. Goal stands received cover in 1953, with a new main stand built in the north in 1957. Interestingly, it was built behind the previous one, not in its place. After completion the older stand was dismantled and pitch was moved closer to the new one. After this 4th stand was erected opposite the main one with inauguration of floodlight masts in 1960 ending a very dynamic decade.\nMain stand was revamped in 1992 after the Taylor Report. Then in Spring of 1996 the newest addition of that time came - a 2-tiered stand with skyboxes in the southern part of the ground, opposite the main stand. After this major change fans had to wait until November 2014 to see the new eastern grandstand with some 2,500 seats."
                 },
                 {
-                    "name": "Kassam Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/kassam_stadium",
+                    "name": "AESSEAL New York Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/new_york_stadium",
                     "country": "England",
-                    "town": "Oxford",
+                    "town": "Rotherham",
                     "clubs": [
-                        "Oxford United"
+                        "Rotherham United FC"
                     ],
                     "league": {
                         "name": "Sky Bet League One",
                         "tier": 3
                     },
-                    "capacity": 12500,
-                    "address": "Grenoble Road, Oxford, OX4 4XP",
-                    "record_attendance": 12177,
-                    "record_attendance_details": "Oxford - Aston Villa, 06.11.2002",
-                    "inauguration": "2001-01-01"
+                    "capacity": 12088,
+                    "capacity_details": [
+                        {
+                            "capacity": 2000,
+                            "designation": "Away section"
+                        }
+                    ],
+                    "address": "New York Way, Rotherham, S60 1AH",
+                    "cost": {
+                        "amount": 25000000,
+                        "currency": "£"
+                    },
+                    "design": {
+                        "start": "2010-01-01",
+                        "end": "2011-01-01"
+                    },
+                    "construction": {
+                        "start": "2011-06-16",
+                        "end": "2012-07-19"
+                    },
+                    "inauguration": "2012-07-21",
+                    "inauguration_details": "Rotherham United - Barnsley, 2-1",
+                    "designer": "S+P Architects",
+                    "contractor": "GMI Construction Group",
+                    "description": "AESSEAL New York Stadium - stadium description\nName may lead you to thinking it has something to do with the Big Apple in United States. And not without a reason - the ground stands where a foundry responsible for iconic NY City hydrants used to be. But more simply new stadium is just called after the neighbourhood it was built in.\nAlthough construction took just over one year, plans were in place much earlier. Rotherham United didn't come to an agreement with their previous ground's owner and had to seek for an alternative. Temporary stay at the Don Valley Stadium was no solution in the long term, so the idea of new community stadium was brought forward. Design drawn in 2010, plot bought the same year, construction started in June 2011. By mid-July 2012 the stadium was ready for opening.\nIt took £25 million to build the 12,000-seat stands that encircle the pitch, but it's not just that. New York Stadium is also the biggest conference centre locally with capacity of up to 700 people for single events. It's also located very comfortably within walking distance from the centre, close to railway station and bus interchange, also with decent car capacity.\nThe visual side was done by S+P Architects. Along with their vision the bowl grows proportionally from south-east to north-west, ending with the dominating main grandstand. The seating is all in one tier, apart of course from the skyboxes and suites.  "
+                },
+                {
+                    "name": "Edgeley Park",
+                    "url": "http://stadiumdb.com/stadiums/eng/edgeley_park",
+                    "country": "England",
+                    "town": "Stockport",
+                    "clubs": [
+                        "Stockport County"
+                    ],
+                    "league": {
+                        "name": "Sky Bet League One",
+                        "tier": 3
+                    },
+                    "capacity": 10842,
+                    "capacity_details": [
+                        {
+                            "capacity": 2020,
+                            "designation": "Danny Bergara Stand"
+                        },
+                        {
+                            "capacity": 2410,
+                            "designation": "Together family Stand"
+                        },
+                        {
+                            "capacity": 5058,
+                            "designation": "Cheadle End"
+                        },
+                        {
+                            "capacity": 1354,
+                            "designation": "Vitality Railway End Stand"
+                        }
+                    ],
+                    "address": "16 Hardcastle Road, Edgeley, Stockport SK3 9DD",
+                    "inauguration": "1891-09-03",
+                    "description": "Edgeley Park - stadium description\nEdgeley Park was originally built for the rugby league team, Stockport RFC, who leased the ground owned by the Sykes family in 1891. The first rugby match was played here on September 3, 1891, with the initial construction of a small covered main stand on the north side and terraced stands on the east and south sides.\nIn 1902 Stockport County FC became co-hosts of the stadium and played their first game here on September 13, 1902 (a 1-1 draw with Gainsborough Trinity FC). The rugby league team was soon disbanded and Stockport County remained the only club playing at Edgeley Park, where it still plays today. In subsequent years the stands around the pitch were gradually extended.\nIn 1935 the wooden main stand on the northside burnt down, and with it the club's archives. A new stand was built in its place a year later. On October 16, 1956, the first match under floodlights was played at the stadium (Stockport County FC - Fortuna '54 Geleen 3:0). In 1977, the venue hosted Queen Elizabeth II. This was one of the highlights of the Silver Jubilee celebrations to mark the 25th anniversary of her reign.\nOn March 30, 1946, a return match of one of the Football League Third Division North Cup rounds between Stockport County FC and Doncaster Rovers FC was played at the stadium. After a 2-2 draw in the first meeting, the same result followed at Edgeley Park as well. The rules at the time did not yet allow for a penalty shoot-out, and extra-time was played until either team scored a goal.\nThis time, however, no goal was scored in extra time (the hosts did score one, but the referee blew his whistle), and the match ended due to the descending darkness, after 203 minutes of play. In the end, a coin was tossed to determine the host of the next rematch (played at Doncaster, where the local team eventually won 4-0). The match of March 30, 1946, held at Edgeley Park, is the longest known football encounter ever played for stakes.\nOn February 11, 1950, an FA Cup match against Liverpool FC (1:2) set a stadium attendance record (the fixture was watched from the stands by 27,833 spectators). On January 14, 1958, England's national team played two unofficial friendly matches at Edgeley Park, against Manchester City XI and England Under-23 national team. In July 1978, the venue hosted the 3rd edition of the World Lacrosse Championships.\nAlongside Stockport County FC, the stadium also played host to union rugby team Sale Sharks, a Premiership Rugby participant, between 2003 and 2012. During their time playing at Edgeley Park, the team won the national title once (2006) and triumphed once in the European Challenge Cup (2005), Europe's number two rugby union competition.\nThe stadium is located in the Edgeley area, close to Stockport town centre. The stadium pitch is surrounded on four sides by stands, with a total capacity of 10,842 spectators. The stands are equipped with plastic seats, predominantly in blue. Supporters of the visiting teams are seated in the stand behind the eastern goal, which is the only one not covered. The eastern stand features a LED screen. Four floodlight masts stand in the corners of the venue.\nThe main stand on the north side was built in 1936, following a devastating fire to the previous wooden structure in 1935, and has been named the \"Danny Bergara Stand\" since 2012, in honour of the former Stockport County FC manager. The south stand, which has been rebuilt several times, has been named the 'Together family Stand' since 2020, due to a sponsorship deal (it was previously known as the 'Popular Side', 'Vernon Side' or 'Barlow Stand').\nThe concrete terraces on the east side (known as the 'Railway End') were built after redevelopment in the 1980s. In 2001 the stand, the last in the stadium, was fitted with plastic seating. This part of the auditorium accommodates supporters of the visiting teams and, as of 2019, there is a LED screen, which replaced the former digital scoreboard. It is the only stand in the ground without a canopy. Due to an agreement with a sponsor, it has been renamed the Vitality Railway End Stand for the 2022/23 season.\nThe stand behind the west goal, known as the 'Cheadle End', is by far the tallest one in the stadium and its capacity is almost half that of the whole ground. It was completed in 1995 and a friendly match against Manchester City was played on its opening day (July 31). It replaced a wooden stand, which was decided to be demolished after a disastrous fire at Bradford Stadium in 1985 (thereafter, only low concrete terracing stood behind the west goal until the new stand was built).\nThe architectural concept for the Edgeley Park expansion can be seen on a separate subpage\nStockport County FC were promoted to the National League in 2019 and EFL League Two in 2022, returning to the fourth tier of competition in England after an 11-year hiatus. The successes have reignited the ambitions of the club's officials, who hope to reach the Championship (second tier) within a few seasons. Hand in hand with further promotions is also the expansion of the stadium. There are plans to expand the stands on the south side and behind the east goal, as well as to widen the main (north) stand. As a result of the modernisation, the capacity of the venue is to increase to around 18,300 spectators. The work is to be carried out in stages."
                 },
                 {
                     "name": "LNER Stadium",
@@ -2102,6 +2084,49 @@
                     ]
                 },
                 {
+                    "name": "One Call Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/field_mill",
+                    "country": "England",
+                    "town": "Mansfield",
+                    "clubs": [
+                        "Mansfield Town"
+                    ],
+                    "league": {
+                        "name": "Sky Bet League One",
+                        "tier": 3
+                    },
+                    "capacity": 9186,
+                    "capacity_details": [
+                        {
+                            "capacity": 5417,
+                            "designation": "The Ian Greaves Stand"
+                        },
+                        {
+                            "capacity": 1910,
+                            "designation": "North Stand",
+                            "note": "away section"
+                        },
+                        {
+                            "capacity": 1968,
+                            "designation": "Quarry Lane End"
+                        }
+                    ],
+                    "address": "Quarry Lane, Mansfield, Nottinghamshire, NG18 5DA, United Kingdom",
+                    "inauguration": "1861-01-01",
+                    "renovations": [
+                        "1922-01-01",
+                        "1929-01-01",
+                        "1930-01-01",
+                        "1957-01-01",
+                        "1965-01-01",
+                        {
+                            "start": "1999-01-01",
+                            "end": "2001-01-01"
+                        }
+                    ],
+                    "description": "One Call Stadium - stadium description\nConsidered the oldest functioning stadium of England's professional league system, Mansfield's Field Mill has been in use since at least 1861, perhaps even longer. Its name is owed to a large mill which used to stand just south of the field until its demolition in 1925.\nFor the first half a century it served primarily for cricket and football players were not even allowed to the dressing rooms. This began shifting as the 20th century came along with shift towards football-only use. Although there were episodes of rugby or greyhound racing, the stadium's main purpose hasn't changed since. Even its first concert as late as 2010 has proven the single only one to date.\nFirst grandstand was built along the west side in 1922, while remaining stands were raised with coal ash brought from nearby mines. In 1929 a modest roof/shed was erected in the east, but a much more symbolic event happened the following year.\nOn February 22, 1930 the stadium became England's first to host a competetive game under floodlights. And even though such practices were then sceapped for two decades, the event enjoyed nationwide interest, with representatives of major teams and even Wembley in attendance.\nIn 1957 the supporters club funded a new north end, later adding an even greater effort in early 1960s, when fans bought a stand from the defunct Hurst Park racecourse. Both of these survived until late 1990s, when post-Taylor reconstruction began.\nDuring the 1999-2001 period the stadium changed its image entirely. Three new stands were built, two behind goals and the most impressive, double-tiered one along the west side."
+                },
+                {
                     "name": "St James Park",
                     "url": "http://stadiumdb.com/stadiums/eng/st_james_park_exeter",
                     "country": "England",
@@ -2220,65 +2245,6 @@
                     "inauguration": "1961-01-01"
                 },
                 {
-                    "name": "Completely-Suzuki Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/whaddon_road",
-                    "country": "England",
-                    "town": "Cheltenham",
-                    "clubs": [
-                        "Cheltenham Town"
-                    ],
-                    "league": {
-                        "name": "Sky Bet League One",
-                        "tier": 3
-                    },
-                    "capacity": 7200,
-                    "other_names": [
-                        {
-                            "name": "Victory Sports Ground",
-                            "duration": {
-                                "start": "1927-01-01",
-                                "end": "2009-01-01"
-                            }
-                        },
-                        {
-                            "name": "Abbey Business Stadium",
-                            "duration": {
-                                "start": "2009-01-01",
-                                "end": "2015-01-01"
-                            }
-                        },
-                        {
-                            "name": "The World of Smile Stadium",
-                            "duration": {
-                                "start": "2015-01-01",
-                                "end": "2016-01-01"
-                            }
-                        },
-                        {
-                            "name": "LCI Rail Stadium",
-                            "duration": {
-                                "start": "2016-01-01",
-                                "end": "2018-01-01"
-                            }
-                        },
-                        {
-                            "name": "Jonny-Rocks Stadium",
-                            "duration": {
-                                "start": "2018-01-01",
-                                "end": "2022-01-01"
-                            }
-                        }
-                    ],
-                    "record_attendance": 8326,
-                    "record_attendance_details": "17/11/1956",
-                    "inauguration": "1927-01-01",
-                    "renovations": [
-                        "2001-01-01",
-                        "2005-01-01"
-                    ],
-                    "description": "Completely-Suzuki Stadium - stadium description\nAlthough since the beginning in 1927 it had been officially named Victory Sports Ground, most frequently used name became Whaddon Road, along with the tradition of calling stadiums by their address. In fact, until 2009 many people were unaware of the name and only found out that it was Victory Sports Ground when naming rights deal with local company came into force. A 5-year deal changed the name to Abbey Business Stadium for 2009-2014.\nThe ground was a gift from local brewery back in 1927 and was inhabited by Chaltenham Town in 1932. The club remains here to this day, now having ownership and since 2010 sharing it with Gloucester City, whose venue was destroyed by flood."
-                },
-                {
                     "name": "Pirelli Stadium",
                     "url": "http://stadiumdb.com/stadiums/eng/pirelli_stadium",
                     "country": "England",
@@ -2313,50 +2279,25 @@
                     "contractor": "Bison"
                 },
                 {
-                    "name": "Highbury Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/highbury_stadium",
+                    "name": "Checkatrade.com Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/broadfield_stadium",
                     "country": "England",
-                    "town": "Fleetwood",
+                    "town": "Crawley",
                     "clubs": [
-                        "Fleetwood Town"
+                        "Crawley Town"
                     ],
                     "league": {
                         "name": "Sky Bet League One",
                         "tier": 3
                     },
-                    "capacity": 5137,
-                    "capacity_details": [
-                        {
-                            "capacity": 2054,
-                            "designation": "Parkside Stand (east)"
-                        },
-                        {
-                            "capacity": 1447,
-                            "designation": "Memorial Stand (north)"
-                        },
-                        {
-                            "capacity": 618,
-                            "designation": "Highbury Stand (west)"
-                        },
-                        {
-                            "capacity": 16,
-                            "designation": "Disabled seats"
-                        },
-                        {
-                            "capacity": 20,
-                            "designation": "Press seats"
-                        }
-                    ],
-                    "address": "Park Avenue, Fleetwood, Lancashire, FY7 6TX",
-                    "inauguration": "1939-09-01",
+                    "capacity": 6134,
+                    "address": "Winfield Way, Crawley RH11 9RX, United Kingdom",
+                    "inauguration": "1997-07-24",
+                    "inauguration_details": "Crawley Town FC - Port Vale",
                     "renovations": [
-                        "2008-01-01",
-                        {
-                            "start": "2010-01-01",
-                            "end": "2011-01-01"
-                        }
+                        "2012-01-01"
                     ],
-                    "description": "Highbury Stadium - stadium description\nFirst game at the site was played in early September 1939, but as WWII broke out, fans had to wait several years for another fixture.\nDuring its first decades it wasn't used only by football side Fleetwood Town, but also by local speedway team (1948-1952), thus the large distance between two sections and the pitch, which wasn't reduced until 2008.\nThis is when major overhaul of the stadium began, with new west and north stands being erected very quickly, between April and August. As second phase a modern east stand (with 7 skyboxes, among other features) was opened, but not in 2010, as initially planned, but in 2011."
+                    "description": "Checkatrade.com Stadium - stadium description\nAfter 49 seasons at the old Town Mead, Crawley FC in 1997 moved from the north to southern part of town. The purpose-build Broadfield Stadium served as a long-term solution after Taylor Report, eventually being opened with three grandstands.\nThe main one and only part to have seats was built in the west, along with all crucial club facilities. Both ends received covered terracing while the east side, along Brighton Road, was initially left open.\nFollowing amazing success and promotion to League Two in 2011, the east side was filled with temporary seating, which in 2012 received a canopy.\nIn 2013 the ground became subject to its first ever naming rights contract, with Checkatrade.com."
                 },
                 {
                     "name": "Twickenham",
@@ -2643,6 +2584,24 @@
                     "description": "Alexander Stadium - stadium description\nOne of Britain's most well known athletic stadium sits within the picturesque Perry Park in Birmingham. Although it did host football on a number of occasions, usually it served as a training venue, once also hosting an American football fixture. On a daily basis the hosts are Birchfield Harriers, one of England's most historic athletic clubs.\nWhen it opened in 1976, the venue had only one stand, on the west side. In subsequent years, it was also joined by two arches - the south-west and the north-west. In 2012, the east stand was completed.\nIn connection with the organisation of the 2022 Commonwealth Games, the existing east stand and the arches were demolished in autumn 2019. Then, between 2020 and 2022, completely new stands were built on the arches and the east side. After the expansion, the capacity of the stadium was set at 18,000 spectators, with the possibility of additional temporary auditoriums being added for large events."
                 },
                 {
+                    "name": "Brunton Park",
+                    "url": "http://stadiumdb.com/stadiums/eng/brunton_park",
+                    "country": "England",
+                    "town": "Carlisle",
+                    "clubs": [
+                        "United"
+                    ],
+                    "league": {
+                        "name": "Other"
+                    },
+                    "capacity": 17949,
+                    "address": "Carlisle United FC, Brunton Park, Warwick Road, Carlisle, CA1 1LL",
+                    "record_attendance": 27500,
+                    "record_attendance_details": "Carlisle United - Birmingham City, 05.01.1957",
+                    "inauguration": "1909-08-02",
+                    "inauguration_details": "Carlisle United - Newcastle United"
+                },
+                {
                     "name": "Totally Wicked Stadium",
                     "url": "http://stadiumdb.com/stadiums/eng/st_helens_stadium",
                     "country": "England",
@@ -2788,6 +2747,39 @@
                     "inauguration": "2006-12-17",
                     "inauguration_details": "Rovers - Huddersfield Town, 3-0",
                     "description": "Eco-Power Stadium - stadium description\nNew stadium in Doncaster was subject to wide consultations before construction began and though it doesn't stand out visually from grounds of similar size, these consultations apparently paid off. 4 years after opening the venue received Stadium Business Award 2010 for best matchday experience.\nFour simle, single-tiered stands enclose the pitch, giving a capacity of 15,231 seats, almost 50% more than the previous football ground in town, Belle Vue. Since 2007 the stadium worth Ł32 mln (public spending) is used by three clubs: the Doncaster Rovers, rugby side Doncaster RFLC and female team Belles LFC. From time to time it changes into concert venue for music stars on national tours."
+                },
+                {
+                    "name": "Vale Park",
+                    "url": "http://stadiumdb.com/stadiums/eng/vale_park",
+                    "country": "England",
+                    "town": "Stoke-on-Trent",
+                    "clubs": [
+                        "Port Vale"
+                    ],
+                    "league": {
+                        "name": "Other"
+                    },
+                    "capacity": 15036,
+                    "address": "Vale Park, Hamil Road, Burslem, Stoke-on-Trent, Staffordshire, ST6 1AW",
+                    "record_attendance": 49768,
+                    "record_attendance_details": "Port Vale - Aston Villa, 1960",
+                    "construction": {
+                        "start": "1944-01-01",
+                        "end": "1950-01-01"
+                    },
+                    "inauguration": "1950-08-24",
+                    "inauguration_details": "Port Vale - Newport County, 1-0",
+                    "renovations": [
+                        "1954-01-01",
+                        "1956-01-01",
+                        "1959-01-01",
+                        "1988-01-01",
+                        "1989-01-01",
+                        "1992-01-01",
+                        "1995-01-01",
+                        "2000-01-01"
+                    ],
+                    "description": "Vale Park - stadium description\nThough it may seem hard to believe, this was supposed to be ‘Wembley of the North', with 80,000 capacity and 1,000-car parking space around it. However reality proved these plans were too ambitious for a third-league side. That didn't stop Port Vale overall, just forced a decrease in plans.\nNew stadium had to get built as the club lost tenancy at its previous ground. Decision was made to build in a former clay pit next to Burslem Park where Vale started their history.\nConstruction took long 5 years and resulted in 40,000 capacity (though only 360 seated)Stands were erected alongside the pitch, while end zones were land slopes. Before first decade of existence ended, size went up to 50,000 people (in 1954, 1,000 seated) and floodlights were installed (1958).\nIn mid-1980s problem appeared as capacity fell to just over 16,000 for safety reasons. Late 1980s saw hundreds of thousands spent on floodlight improvements, scoreboard and spectator facilities, like first of its kind in the UK disabled section. But these efforts didn't solve size problems, inspectors again cut capacity, to 12,000.\nNo wonder intensive works started in early 1990s to convert the ground into an all-seater and last game with terraces took place in late 1998. Right after this construction of a new eastern stand began. Interestingly, it hasn't been finished to date."
                 },
                 {
                     "name": "Twickenham Stoop",
@@ -3028,40 +3020,6 @@
                     ],
                     "contractor": "GMI Construction",
                     "description": "Poundland Bescot Stadium - stadium description\nThough erected in 1990, this venue needed a revamp soon afterwards. This was due to stricter safety regulations implemented after Hillsborough disaster. Meanwhile most of the ground's 9,400 spots were standing, thus needed to be closed or changed into much more space-consuming seating. After a period of reduced capacity the stadium was enlarged to 11,300 in 2003.\nThere are two large banqueting/conference rooms and three bars at the ground. It is known for rather unsympathetic exterior. One façade, the most seen one, is located adjacent to M6 motorway and covered in advertising, which only adds to the cheap cladding."
-                },
-                {
-                    "name": "Edgeley Park",
-                    "url": "http://stadiumdb.com/stadiums/eng/edgeley_park",
-                    "country": "England",
-                    "town": "Stockport",
-                    "clubs": [
-                        "Stockport County"
-                    ],
-                    "league": {
-                        "name": "Other"
-                    },
-                    "capacity": 10842,
-                    "capacity_details": [
-                        {
-                            "capacity": 2020,
-                            "designation": "Danny Bergara Stand"
-                        },
-                        {
-                            "capacity": 2410,
-                            "designation": "Together family Stand"
-                        },
-                        {
-                            "capacity": 5058,
-                            "designation": "Cheadle End"
-                        },
-                        {
-                            "capacity": 1354,
-                            "designation": "Vitality Railway End Stand"
-                        }
-                    ],
-                    "address": "16 Hardcastle Road, Edgeley, Stockport SK3 9DD",
-                    "inauguration": "1891-09-03",
-                    "description": "Edgeley Park - stadium description\nEdgeley Park was originally built for the rugby league team, Stockport RFC, who leased the ground owned by the Sykes family in 1891. The first rugby match was played here on September 3, 1891, with the initial construction of a small covered main stand on the north side and terraced stands on the east and south sides.\nIn 1902 Stockport County FC became co-hosts of the stadium and played their first game here on September 13, 1902 (a 1-1 draw with Gainsborough Trinity FC). The rugby league team was soon disbanded and Stockport County remained the only club playing at Edgeley Park, where it still plays today. In subsequent years the stands around the pitch were gradually extended.\nIn 1935 the wooden main stand on the northside burnt down, and with it the club's archives. A new stand was built in its place a year later. On October 16, 1956, the first match under floodlights was played at the stadium (Stockport County FC - Fortuna '54 Geleen 3:0). In 1977, the venue hosted Queen Elizabeth II. This was one of the highlights of the Silver Jubilee celebrations to mark the 25th anniversary of her reign.\nOn March 30, 1946, a return match of one of the Football League Third Division North Cup rounds between Stockport County FC and Doncaster Rovers FC was played at the stadium. After a 2-2 draw in the first meeting, the same result followed at Edgeley Park as well. The rules at the time did not yet allow for a penalty shoot-out, and extra-time was played until either team scored a goal.\nThis time, however, no goal was scored in extra time (the hosts did score one, but the referee blew his whistle), and the match ended due to the descending darkness, after 203 minutes of play. In the end, a coin was tossed to determine the host of the next rematch (played at Doncaster, where the local team eventually won 4-0). The match of March 30, 1946, held at Edgeley Park, is the longest known football encounter ever played for stakes.\nOn February 11, 1950, an FA Cup match against Liverpool FC (1:2) set a stadium attendance record (the fixture was watched from the stands by 27,833 spectators). On January 14, 1958, England's national team played two unofficial friendly matches at Edgeley Park, against Manchester City XI and England Under-23 national team. In July 1978, the venue hosted the 3rd edition of the World Lacrosse Championships.\nAlongside Stockport County FC, the stadium also played host to union rugby team Sale Sharks, a Premiership Rugby participant, between 2003 and 2012. During their time playing at Edgeley Park, the team won the national title once (2006) and triumphed once in the European Challenge Cup (2005), Europe's number two rugby union competition.\nThe stadium is located in the Edgeley area, close to Stockport town centre. The stadium pitch is surrounded on four sides by stands, with a total capacity of 10,842 spectators. The stands are equipped with plastic seats, predominantly in blue. Supporters of the visiting teams are seated in the stand behind the eastern goal, which is the only one not covered. The eastern stand features a LED screen. Four floodlight masts stand in the corners of the venue.\nThe main stand on the north side was built in 1936, following a devastating fire to the previous wooden structure in 1935, and has been named the \"Danny Bergara Stand\" since 2012, in honour of the former Stockport County FC manager. The south stand, which has been rebuilt several times, has been named the 'Together family Stand' since 2020, due to a sponsorship deal (it was previously known as the 'Popular Side', 'Vernon Side' or 'Barlow Stand').\nThe concrete terraces on the east side (known as the 'Railway End') were built after redevelopment in the 1980s. In 2001 the stand, the last in the stadium, was fitted with plastic seating. This part of the auditorium accommodates supporters of the visiting teams and, as of 2019, there is a LED screen, which replaced the former digital scoreboard. It is the only stand in the ground without a canopy. Due to an agreement with a sponsor, it has been renamed the Vitality Railway End Stand for the 2022/23 season.\nThe stand behind the west goal, known as the 'Cheadle End', is by far the tallest one in the stadium and its capacity is almost half that of the whole ground. It was completed in 1995 and a friendly match against Manchester City was played on its opening day (July 31). It replaced a wooden stand, which was decided to be demolished after a disastrous fire at Bradford Stadium in 1985 (thereafter, only low concrete terracing stood behind the west goal until the new stand was built).\nThe architectural concept for the Edgeley Park expansion can be seen on a separate subpage\nStockport County FC were promoted to the National League in 2019 and EFL League Two in 2022, returning to the fourth tier of competition in England after an 11-year hiatus. The successes have reignited the ambitions of the club's officials, who hope to reach the Championship (second tier) within a few seasons. Hand in hand with further promotions is also the expansion of the stadium. There are plans to expand the stands on the south side and behind the east goal, as well as to widen the main (north) stand. As a result of the modernisation, the capacity of the venue is to increase to around 18,300 spectators. The work is to be carried out in stages."
                 },
                 {
                     "name": "StoneX Stadium",
@@ -3318,48 +3276,6 @@
                     "description": "Plough Lane - stadium description\nThis stadium's origin might be the most famous among so called ‘phoenix club' stories. When Wimbledon FC relocated to Milton Keynes in 2003, supporters decided to stay put and rebuild their own club. Preserving identity was their short-term goal, while in the long term the dream was to return to Plough Lane, where the team's historical stadium used to stand.\nThe old Plough Lane was in operation since 1912 but fell short of new safety and spectator comfort requirements after the Taylor Report. Since it was beyond saving, Wimbledon moved out in 1991, sharing Selhurst Park with Crystal Palace. The ground remained in limited use until 1998 and was eventually demolished in 2002. With residential buildings covering its area, it wasn't an option to build on the very same spot, however land nearby became available.\nIn 2013, just over a decade since creation, AFC Wimbledon were able to announce partnership with developer Galliard Homes to take over land on which an old greyhound racing stadium was situated, just 200 metres east from the old ground, also on Plough Lane. For the developer such endeavour had to include vast residential development, which meant over 600 new apartments around the proposed new stadium, all packed on just 5.1 hectares.\nAfter turbulent preparation and proceedings, planning permission was granted in 2017 and construction was due to begin in 2018. But, while the site was cleared entirely in that year and the residential part began growing, Wimbledon only took control of their site in December and actual work on the new stadium was launched in first half of 2019.\nFunding for the sports development also proved problematic, despite a significant chunk being covered from the residential part and sale of Kingsmeadow. Supporters came to their club's aid on more than one occasion, first through crowdfunding and then by buying bonds. In total, direct fan payments covered well over £7 million out of a total that ballooned to 33 million. Local businessman Nick Robertson also came to the club's aid without sacrificing its democratic principles.\nAfter over a year of construction, in autumn of 2020, opening became a possibility. But, because of the ongoing pandemic, fans were unable to attend the first match on November 3. The very first opportunity, albeit with restricted capacity, came on May 18, 2021, when 2,000 people enjoyed a friendly against Liverpool FC's U23 team.\nThe delivered stadium is only the first phase of the final build. The west stand with its south-west corner are permanent, while three remaining stands and two floodlight masts are semi-permanent. They can (and eventually will) be dismantled to make way for much larger permanent structures. Such mode was chosen for economic and practical reasons. It's simply much easier to grow within a smaller yet complete stadium.\nThe west side may have a single tier of seating, but together with two glazed levels above it comprises a total of 4 floors of facilities. This allowed AFC Wimbledon to deliver all necessary functions within the first phase, including sporting, administrative, media and hospitality areas. The remaining modular stands are lower but also fully functional. The south end is for the most vocal fans, with its safe standing section, the north end for away followers.\nIn its final layout, the stadium is expected to safely host up to 20,000 people with a compact bowl almost reaching the nearby residential building. Once delivered, it will make it impossible for neighbours to watch games from home."
                 },
                 {
-                    "name": "One Call Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/field_mill",
-                    "country": "England",
-                    "town": "Mansfield",
-                    "clubs": [
-                        "Mansfield Town"
-                    ],
-                    "league": {
-                        "name": "Other"
-                    },
-                    "capacity": 9186,
-                    "capacity_details": [
-                        {
-                            "capacity": 5417,
-                            "designation": "The Ian Greaves Stand"
-                        },
-                        {
-                            "capacity": 1910,
-                            "designation": "North Stand",
-                            "note": "away section"
-                        },
-                        {
-                            "capacity": 1968,
-                            "designation": "Quarry Lane End"
-                        }
-                    ],
-                    "address": "Quarry Lane, Mansfield, Nottinghamshire, NG18 5DA, United Kingdom",
-                    "inauguration": "1861-01-01",
-                    "renovations": [
-                        "1922-01-01",
-                        "1929-01-01",
-                        "1930-01-01",
-                        "1957-01-01",
-                        "1965-01-01",
-                        {
-                            "start": "1999-01-01",
-                            "end": "2001-01-01"
-                        }
-                    ],
-                    "description": "One Call Stadium - stadium description\nConsidered the oldest functioning stadium of England's professional league system, Mansfield's Field Mill has been in use since at least 1861, perhaps even longer. Its name is owed to a large mill which used to stand just south of the field until its demolition in 1925.\nFor the first half a century it served primarily for cricket and football players were not even allowed to the dressing rooms. This began shifting as the 20th century came along with shift towards football-only use. Although there were episodes of rugby or greyhound racing, the stadium's main purpose hasn't changed since. Even its first concert as late as 2010 has proven the single only one to date.\nFirst grandstand was built along the west side in 1922, while remaining stands were raised with coal ash brought from nearby mines. In 1929 a modest roof/shed was erected in the east, but a much more symbolic event happened the following year.\nOn February 22, 1930 the stadium became England's first to host a competetive game under floodlights. And even though such practices were then sceapped for two decades, the event enjoyed nationwide interest, with representatives of major teams and even Wembley in attendance.\nIn 1957 the supporters club funded a new north end, later adding an even greater effort in early 1960s, when fans bought a stand from the defunct Hurst Park racecourse. Both of these survived until late 1990s, when post-Taylor reconstruction began.\nDuring the 1999-2001 period the stadium changed its image entirely. Three new stands were built, two behind goals and the most impressive, double-tiered one along the west side."
-                },
-                {
                     "name": "Sands Venue Stadium",
                     "url": "http://stadiumdb.com/stadiums/eng/glanford_park",
                     "country": "England",
@@ -3478,6 +3394,64 @@
                     "record_attendance_details": "Grantham Town - Southport, 1998",
                     "inauguration": "1991-08-01",
                     "description": "South Kesteven Sports Stadium - stadium description\nThe stadium occupies the plot of previous football training complex The Meres. Thus the nickname, remembering the roots of current Grantham Town FC. Quite rightly, as all of the best performing youth later moved to play at the club, in the town centre.\nThe centrally-located stadium was closed in 1990, however, while construction began on the new one. It was ready to accept players and spectators in the summer of 1991.\nWith stands able to hold 7,500 people with terracing included, it's always spacious enough for everyone. That of course is due to low-profile games currently played by The Gingerbreads."
+                },
+                {
+                    "name": "Completely-Suzuki Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/whaddon_road",
+                    "country": "England",
+                    "town": "Cheltenham",
+                    "clubs": [
+                        "Cheltenham Town"
+                    ],
+                    "league": {
+                        "name": "Other"
+                    },
+                    "capacity": 7200,
+                    "other_names": [
+                        {
+                            "name": "Victory Sports Ground",
+                            "duration": {
+                                "start": "1927-01-01",
+                                "end": "2009-01-01"
+                            }
+                        },
+                        {
+                            "name": "Abbey Business Stadium",
+                            "duration": {
+                                "start": "2009-01-01",
+                                "end": "2015-01-01"
+                            }
+                        },
+                        {
+                            "name": "The World of Smile Stadium",
+                            "duration": {
+                                "start": "2015-01-01",
+                                "end": "2016-01-01"
+                            }
+                        },
+                        {
+                            "name": "LCI Rail Stadium",
+                            "duration": {
+                                "start": "2016-01-01",
+                                "end": "2018-01-01"
+                            }
+                        },
+                        {
+                            "name": "Jonny-Rocks Stadium",
+                            "duration": {
+                                "start": "2018-01-01",
+                                "end": "2022-01-01"
+                            }
+                        }
+                    ],
+                    "record_attendance": 8326,
+                    "record_attendance_details": "17/11/1956",
+                    "inauguration": "1927-01-01",
+                    "renovations": [
+                        "2001-01-01",
+                        "2005-01-01"
+                    ],
+                    "description": "Completely-Suzuki Stadium - stadium description\nAlthough since the beginning in 1927 it had been officially named Victory Sports Ground, most frequently used name became Whaddon Road, along with the tradition of calling stadiums by their address. In fact, until 2009 many people were unaware of the name and only found out that it was Victory Sports Ground when naming rights deal with local company came into force. A 5-year deal changed the name to Abbey Business Stadium for 2009-2014.\nThe ground was a gift from local brewery back in 1927 and was inhabited by Chaltenham Town in 1932. The club remains here to this day, now having ownership and since 2010 sharing it with Gloucester City, whose venue was destroyed by flood."
                 },
                 {
                     "name": "Joie Stadium",
@@ -3671,26 +3645,6 @@
                     "description": "Underhill Stadium - stadium description\nThe ground has bee opened in Sept 1907, putting it among the oldest grounds still in use. It's famous for pitch that isn't level, but slopes from North to South. A major redevelopment was carried out in mid-1990's when terracing of the West Bank was destroyed, once heart of the local support. Apart from these works only single sections were being remodeled over the years, resulting in an unusual number of 7 separate stands instead of the usual four."
                 },
                 {
-                    "name": "Checkatrade.com Stadium",
-                    "url": "http://stadiumdb.com/stadiums/eng/broadfield_stadium",
-                    "country": "England",
-                    "town": "Crawley",
-                    "clubs": [
-                        "Crawley Town"
-                    ],
-                    "league": {
-                        "name": "Other"
-                    },
-                    "capacity": 6134,
-                    "address": "Winfield Way, Crawley RH11 9RX, United Kingdom",
-                    "inauguration": "1997-07-24",
-                    "inauguration_details": "Crawley Town FC - Port Vale",
-                    "renovations": [
-                        "2012-01-01"
-                    ],
-                    "description": "Checkatrade.com Stadium - stadium description\nAfter 49 seasons at the old Town Mead, Crawley FC in 1997 moved from the north to southern part of town. The purpose-build Broadfield Stadium served as a long-term solution after Taylor Report, eventually being opened with three grandstands.\nThe main one and only part to have seats was built in the west, along with all crucial club facilities. Both ends received covered terracing while the east side, along Brighton Road, was initially left open.\nFollowing amazing success and promotion to League Two in 2011, the east side was filled with temporary seating, which in 2012 received a canopy.\nIn 2013 the ground became subject to its first ever naming rights contract, with Checkatrade.com."
-                },
-                {
                     "name": "Victoria Road",
                     "url": "http://stadiumdb.com/stadiums/eng/victoria_road",
                     "country": "England",
@@ -3813,6 +3767,51 @@
                     },
                     "inauguration": "1992-08-25",
                     "inauguration_details": "Chester city FC - Stockport County, 1-2"
+                },
+                {
+                    "name": "Highbury Stadium",
+                    "url": "http://stadiumdb.com/stadiums/eng/highbury_stadium",
+                    "country": "England",
+                    "town": "Fleetwood",
+                    "clubs": [
+                        "Fleetwood Town"
+                    ],
+                    "league": {
+                        "name": "Other"
+                    },
+                    "capacity": 5137,
+                    "capacity_details": [
+                        {
+                            "capacity": 2054,
+                            "designation": "Parkside Stand (east)"
+                        },
+                        {
+                            "capacity": 1447,
+                            "designation": "Memorial Stand (north)"
+                        },
+                        {
+                            "capacity": 618,
+                            "designation": "Highbury Stand (west)"
+                        },
+                        {
+                            "capacity": 16,
+                            "designation": "Disabled seats"
+                        },
+                        {
+                            "capacity": 20,
+                            "designation": "Press seats"
+                        }
+                    ],
+                    "address": "Park Avenue, Fleetwood, Lancashire, FY7 6TX",
+                    "inauguration": "1939-09-01",
+                    "renovations": [
+                        "2008-01-01",
+                        {
+                            "start": "2010-01-01",
+                            "end": "2011-01-01"
+                        }
+                    ],
+                    "description": "Highbury Stadium - stadium description\nFirst game at the site was played in early September 1939, but as WWII broke out, fans had to wait several years for another fixture.\nDuring its first decades it wasn't used only by football side Fleetwood Town, but also by local speedway team (1948-1952), thus the large distance between two sections and the pitch, which wasn't reduced until 2008.\nThis is when major overhaul of the stadium began, with new west and north stands being erected very quickly, between April and August. As second phase a modern east stand (with 7 skyboxes, among other features) was opened, but not in 2010, as initially planned, but in 2011."
                 },
                 {
                     "name": "Moor Lane",
