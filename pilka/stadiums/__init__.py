@@ -23,12 +23,12 @@ from bs4 import BeautifulSoup, Tag
 
 from pilka.constants import FILENAME_TIMESTAMP_FORMAT, OUTPUT_DIR, \
     PathLike, READABLE_TIMESTAMP_FORMAT
-from pilka.stadiums.data import Cost, Country, CountryStadiumsData, Duration, League, Nickname, \
-    Stadium, SubCapacity, Town, BasicStadium, POLAND
-from pilka.utils import ParsingError, extract_date, extract_float, extract_int, from_iterable, \
-    getdir, timed, clean_parenthesized
-from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 from pilka.constants import T
+from pilka.stadiums.data import BasicStadium, Cost, Country, CountryStadiumsData, Duration, League, \
+    Nickname, POLAND, Stadium, SubCapacity, Town
+from pilka.utils import ParsingError, clean_parenthesized, extract_date, extract_float, extract_int, \
+    from_iterable, getdir, timed
+from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
 
 _log = logging.getLogger(__name__)
 

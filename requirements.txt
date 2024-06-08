@@ -1,3 +1,4 @@
+click~=8.1.7
 CurrencyConverter~=0.17.22
 backoff~=2.2.1
 beautifulsoup4~=4.12.2
