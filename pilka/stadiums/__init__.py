@@ -339,6 +339,12 @@ class DetailsScraper:
         lines += [p.text for p in article.find_all("p")]
         return normalize("\n".join(lines)) if lines else None
 
+    # FIXME: handle "404 Not Found" cases with backoff (on rare occasions a link that leads to a
+    #  working page results in this hiccup) ==> this means using the builtin capabilities of
+    #  `requests` of raising a proper HTTPError in `getsoup()` and catching it here and than
+    #  handling with backoff
+    # FIXME: also, sometimes there's even no "404 Not Found" error but the main tag is missing
+    #  but the page is OK when checked in the browser
     @throttled(throttling_delay)
     def scrape(self) -> Stadium:
         self._soup = getsoup(self._basic_data.url)

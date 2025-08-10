@@ -44,7 +44,7 @@ def getsoup(url: str, headers: Dict[str, str] | None = None) -> BeautifulSoup:
     Returns:
         a BeautifulSoup object
     """
-    _log.info(f"Requesting: {url!r}")
+    _log.info(f"Requesting: {url!r}...")
     global http_requests_count
     response = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
     http_requests_count += 1
