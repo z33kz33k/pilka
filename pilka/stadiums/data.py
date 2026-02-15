@@ -1,7 +1,7 @@
 """
 
-    pilka.stadiums.data.py
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.data
+    ~~~~~~~~~~~~~~~~~~~
     Data structures.
 
     @author: z33k

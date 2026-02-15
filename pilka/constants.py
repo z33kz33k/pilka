@@ -1,25 +1,24 @@
 """
 
-    pilka.stadiums.constants.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.constants
+    ~~~~~~~~~~~~~~~~~~~~~~~~
     Script's constants
 
     @author: z33k
 
 """
-import os
 import logging
+import os
+from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Callable, TypeVar
+from typing import Dict, List, TypeVar, Union
 
 _log = logging.getLogger(__name__)
 
-# type hints
-T = TypeVar("T")
-Json = dict[str, Any]
-PathLike = str | Path
-Method = Callable[[Any, tuple[Any, ...]], Any]  # method with signature def methodname(self, *args)
-Function = Callable[[tuple[Any, ...]], Any]  # function with signature def funcname(*args)
+# type aliases
+type T = TypeVar("T")
+type Json = Union[str, int, float, bool, datetime, date, None, Dict[str, "Json"], List["Json"]]
+type PathLike = str | Path
 
 REQUEST_TIMEOUT = 15  # seconds
 FILENAME_TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"

@@ -1,7 +1,7 @@
 """
 
-    pilka.stadiums.utils.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.utils
+    ~~~~~~~~~~~~~~~~~~~~
     Project's utilities.
 
     @author: z33k

@@ -1,7 +1,7 @@
 """
 
-    pilka.stadiums.cli.py
-    ~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums.cli
+    ~~~~~~~~~~~~~~~~~~
     Command-line interface.
 
     @author: z33k

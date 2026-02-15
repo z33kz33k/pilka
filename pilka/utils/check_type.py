@@ -1,19 +1,23 @@
 """
 
-    pilka.stadiums.utils.check_type.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    pilka.utils.check_type
+    ~~~~~~~~~~~~~~~~~~~~~~
     Type checking decorators.
-
     Validate types of input arguments of decorated functions (or methods).
-
     This module provides only basic type validation based on `isinstance()` check.
+
+    @author: z33k
 
 """
 from functools import wraps
-from typing import Any, Iterable, Type
+from typing import Any, Callable, Iterable, Type
 
-from pilka.constants import Method, Function
+
+# type aliases
+# method with signature def methodname(self, # *args)
+type Method = Callable[[Any, tuple[Any, ...]], Any]
+# function with signature def funcname(*args)
+type Function = Callable[[tuple[Any, ...]], Any]
 
 
 def fullqualname(class_: Type) -> str:

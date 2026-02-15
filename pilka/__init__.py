@@ -1,7 +1,7 @@
 """
 
-    pilka.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~
+    pilka
+    ~~~~~
     Scrape (mainly Polish hence name) football data.
 
     @author: z33k

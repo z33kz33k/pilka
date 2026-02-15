@@ -1,7 +1,7 @@
 """
 
-    pilka.stadiums.__init__.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pilka.stadiums
+    ~~~~~~~~~~~~~~
     Scrape stadiums data from stadiony.net/stadiumdb.com page.
 
     @author: z33k
@@ -28,7 +28,7 @@ from pilka.stadiums.data import BasicStadium, Cost, Country, CountryStadiumsData
     Nickname, POLAND, Stadium, SubCapacity, Town
 from pilka.utils import ParsingError, clean_parenthesized, extract_date, extract_float, extract_int, \
     from_iterable, getdir, timed
-from pilka.utils.scrape import ScrapingError, getsoup, http_requests_counted, throttled
+from pilka.utils.scrape import ScrapingError, fetch_soup, http_requests_counted, throttled
 
 _log = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ def normalize(text: str) -> str:
 
 def scrape_polish_towns() -> list[Town]:
     url = "https://pl.wikipedia.org/wiki/Dane_statystyczne_o_miastach_w_Polsce"
-    soup = getsoup(url)
+    soup = fetch_soup(url)
     table = soup.find("table", class_="wikitable")
     if table is None:
         raise ScrapingError(f"Page at {url} contains no 'table' tag of class 'wikitable'")
@@ -69,7 +69,7 @@ def scrape_basic_data(country=POLAND) -> list[BasicStadium]:
     is_pl = country == POLAND
     url = URL_PL if is_pl else URL
     towns = {t.name: t for t in scrape_polish_towns()} if is_pl else None
-    soup = getsoup(url.format(country.id))
+    soup = fetch_soup(url.format(country.id))
     leagues = [normalize(h2.text.strip()) for h2 in soup.find_all("h2")]
     has_national = leagues[0] in ("National Stadium", "Stadion Narodowy")
     for idx, table in enumerate(soup.find_all("table")):
@@ -347,7 +347,7 @@ class DetailsScraper:
     #  but the page is OK when checked in the browser
     @throttled(throttling_delay)
     def scrape(self) -> Stadium:
-        self._soup = getsoup(self._basic_data.url)
+        self._soup = fetch_soup(self._basic_data.url)
         table = self._soup.find("table", class_="stadium-info")
         if table is None:
             raise ScrapingError(
@@ -661,7 +661,7 @@ def scrape_stadiums(country=POLAND) -> Iterator[Stadium]:
 
 def scrape_countries() -> Iterator[Country]:
     url = "http://stadiumdb.com/stadiums"
-    soup = getsoup(url)
+    soup = fetch_soup(url)
     confederations = [h2.text.strip() for h2 in soup.find_all("h2")]
     uls = soup.find_all("ul", class_="country-list")
     for idx, ul in enumerate(uls):

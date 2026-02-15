@@ -1,7 +1,7 @@
 """
 
-    pilka.__main__.py
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    pilka
+    ~~~~~
     CLI's entry point.
 
     @author: z33k
