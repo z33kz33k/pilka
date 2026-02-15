@@ -12,8 +12,25 @@ from pilka.utils import ParsingError
 from pilka.utils.scrape.dynamic import fetch_selenium_json
 
 URL_TEMPLATE = "https://2.ds.lsapp.eu/pq_graphql?_hash=dlie2&eventId={event_id}&projectId=2"
-TEAM_NAMES = {
-    "Legia": "Legia Warszawa",
+TEAM_IDS = {
+    'veCn0USa': "Arka Gdynia",
+    'QDZZYiU0': "Bruk-Bet Termalica Nieciecza",
+    'nLFfb8cC': "Cracovia Kraków",
+    '8UhCGkDt': "GKS Katowice",
+    'YwwrXVbD': "Górnik Zabrze",
+    'hII2dnSO': "Jagiellonia Białystok",
+    'zaN87CzQ': "Korona Kielce",
+    'OKaSC7C5': "Lech Poznań",
+    'tbVbkDEs': "Lechia Gdańsk",
+    'GfdKETsg': "Legia Warszawa",
+    'pSqTfZjK': "Motor Lublin",
+    'dYczBosI': "Piast Gliwice",
+    '6sEv2jbm': "Pogoń Szczecin",
+    'U1zNq9rJ': "Radomiak Radom",
+    'dlxFoVD6': "Raków Częstochowa",
+    'h0ySzEal': "Widzew Łódź",
+    'n19fgMFF': "Wisła Płock",
+    'lOY6miqf': "Zagłębie Lubin",
 }
 
 
@@ -59,7 +76,7 @@ def _process_rating(player_data: dict) -> float | None:
 
 def _process_team(data: dict) -> Team:
     starters, subs = [], []
-    team_name = TEAM_NAMES.get(data["name"], data["name"])
+    team_name = TEAM_IDS[data["id"]]
     lineup_data = data["lineup"]
     starting_ids, subs_ids = _process_grouping(lineup_data)
     manager = _process_manager(lineup_data)
@@ -86,7 +103,7 @@ def _process_team(data: dict) -> Team:
 def fetch_match(event_id: str) -> Match:
     """Fetch match data from Flashscore.
 
-    Comparing to Sofascore only this player data is available:
+    Comparing to Sofascore, only this player data is available:
         * name (in a worse shape, e.g. "Straczek R." instead of a full name)
         * country (in a worse shape, e.g. "Poland" instead of full country codes info)
         * jersey_number
@@ -111,3 +128,6 @@ def fetch_match(event_id: str) -> Match:
             away_team = team
 
     return Match(home_team, away_team)
+
+
+# TODO: event IDs harvesting
